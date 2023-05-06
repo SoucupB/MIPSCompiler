@@ -12,63 +12,68 @@ const tokens = {
   defined_variable: 10,
   sign: 11,
   open_bracket: 12,
-  close_bracket: 13
+  close_bracket: 13,
+  code_segment: 14 // special token
 }
 
 const newRowExpectation = {
-  int7_t: [  // (int7_t) (variable) = (test + 1)(;)
-    {
-      'undefined_variable': [
-        {
-          'equal': [
-            {
-              'expression': [
-                {
-                  'semicolon': []
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    }
-  ],
-  defined_variable: [ // (defined_variable) = (test + 1)(;)
-    {
-      'equal': [
-        {
-          'expression': [
-            {
-              'semicolon': []
-            }
-          ]
-        }
-      ]
-    }
-  ],
-  if: [
-    {
-      'open_paranth': [
-        {
-          'expression': [
-            {
-              'close_paranth': [
-                {
-                  'open_bracket': [
-                    {
-                      'code_segment': [
-                        {
-                          'close_bracket': []
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    }
-  ]
+  code_segment: {
+    int7_t: [  // (int7_t) (variable) = (test + 1)(;)
+      {
+        undefined_variable: [
+          {
+            equal: [
+              {
+                expression: [
+                  {
+                    semicolon: []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    defined_variable: [ // (defined_variable) = (test + 1)(;)
+      {
+        equal: [
+          {
+            expression: [
+              {
+                semicolon: []
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    if: [
+      {
+        open_paranth: [
+          {
+            expression: [
+              {
+                close_paranth: [
+                  {
+                    open_bracket: [
+                      {
+                        code_segment: [
+                          {
+                            close_bracket: []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
 }
+
+module.exports = { tokens, newRowExpectation };
