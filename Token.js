@@ -18,61 +18,35 @@ const tokens = {
 
 const newRowExpectation = {
   code_segment: {
-    int7_t: [  // (int7_t) (variable) = (test + 1)(;)
-      {
-        undefined_variable: [
-          {
-            equal: [
-              {
-                expression: [
-                  {
-                    semicolon: []
-                  }
-                ]
-              }
-            ]
+    int7_t: {
+      undefined_variable: {
+        equal: {
+          expression: {
+            semicolon: {}
           }
-        ]
+        }
       }
-    ],
-    defined_variable: [ // (defined_variable) = (test + 1)(;)
-      {
-        equal: [
-          {
-            expression: [
-              {
-                semicolon: []
+    },
+    defined_variable: {  // (defined_variable) = (test + 1)(;)
+      equal: {
+        expression: {
+          semicolon: {}
+        }
+      }
+    },
+    if: {
+      open_paranth: {
+        expression: {
+          close_paranth: {
+            open_bracket: {
+              code_segment: {
+                close_bracket: {}
               }
-            ]
+            }
           }
-        ]
+        }
       }
-    ],
-    if: [
-      {
-        open_paranth: [
-          {
-            expression: [
-              {
-                close_paranth: [
-                  {
-                    open_bracket: [
-                      {
-                        code_segment: [
-                          {
-                            close_bracket: []
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    ]
+    }
   }
 }
 
