@@ -6,7 +6,8 @@ const tokens = {
   constant_token: 4,
   sign_div: 5,
   sign_open_paranth: 6,
-  sign_close_paranth: 7
+  sign_close_paranth: 7,
+  variable: 8
 }
 
 module.exports = { tokens };

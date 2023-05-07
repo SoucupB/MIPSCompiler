@@ -57,6 +57,11 @@ class ExpressionTree {
         break;
       }
       case tokens.sign_minus: {
+        const leftReg = this._getRegisterValue(left);
+        const rightReg = this._getRegisterValue(right);
+        this.registerEmbed.push(new RegisterEmbed('sub', [this._getRegisterValue(node), leftReg, rightReg]));
+        this._freeRegisters(left);
+        this._freeRegisters(right);
         break;
       }
       case tokens.sign_mul: {
@@ -68,6 +73,11 @@ class ExpressionTree {
         break;
       }
       case tokens.sign_div: {
+        const leftReg = this._getRegisterValue(left);
+        const rightReg = this._getRegisterValue(right);
+        this.registerEmbed.push(new RegisterEmbed('div', [this._getRegisterValue(node), leftReg, rightReg]));
+        this._freeRegisters(left);
+        this._freeRegisters(right);
         break;
       }
     }

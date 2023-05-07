@@ -10,7 +10,7 @@ const example = [
         payload: 'int7_t'
       },
       {
-        token: tokens.undefined_variable,
+        token: tokens.variable,
         payload: 'yolo'
       },
       {
@@ -35,7 +35,7 @@ const example = [
     token: 'assignation',
     payload: [
       {
-        token: tokens.defined_variable,
+        token: tokens.variable,
         payload: 'yolo'
       },
       {
