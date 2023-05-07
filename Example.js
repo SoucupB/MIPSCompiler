@@ -66,6 +66,16 @@ const expressionExample = {
       value: 5
     },
     {
+      token: tokens.sign_mul,
+    },
+    {
+      token: tokens.sign_open_paranth,
+    },
+    {
+      token: tokens.constant_token,
+      value: 14
+    },
+    {
       token: tokens.sign_plus,
     },
     {
@@ -73,11 +83,14 @@ const expressionExample = {
       value: 36
     },
     {
-      token: tokens.sign_minus,
+      token: tokens.sign_close_paranth,
+    },
+    {
+      token: tokens.sign_mul,
     },
     {
       token: tokens.constant_token,
-      value: 11
+      value: 23
     },
   ]
 }

@@ -20,14 +20,19 @@ class ExpressionNode {
   }
 
   parse(expression) {
-    return this.parse_sums_t(expression, 0);
+    return this.parse_sums_t(expression, [0]);
   }
 
   nodeController(exp, index) {
-    if(index + 1 < exp.length && exp[index + 1].token == tokens.sign_mul) {
-      return this.parse_mulls_t(exp, index);
+    if(exp[index[0]].token == tokens.sign_open_paranth) {
+      index[0]++;
+      const resultNode = this.parse_sums_t(exp, index);
+      index[0]++;
+      return resultNode;
     }
-    return this.getNode(exp[index].value);
+    const node = this.getNode(exp[index[0]].value);
+    index[0] += 1;
+    return node;
   }
 
   getNode(value) {
@@ -37,29 +42,30 @@ class ExpressionNode {
   }
 
   parse_mulls_t(expression, index) {
-    let parent = this.getNode(expression[index].value);
-    for(let i = index + 2; i < expression.length; i += 2) {
-      if(expression[i - 1].token != tokens.sign_mul) {
-        return parent;
-      }
-      const nextNode = this.getNode(expression[i].value);
+    let parent = this.nodeController(expression, index);
+    while(index[0] < expression.length && (expression[index[0]].token == tokens.sign_mul || expression[index[0]].token == tokens.sign_div)) {
+      const currentSign = expression[index[0]].token;
+      index[0]++;
+      const nextNode = this.nodeController(expression, index);
       const localParent = this.getNode(null);
       localParent.left = parent;
       localParent.right = nextNode;
-      localParent.sign = expression[i - 1].token;
+      localParent.sign = currentSign;
       parent = localParent;
     }
     return parent;
   }
 
   parse_sums_t(expression, index) {
-    let parent = this.nodeController(expression, index);
-    for(let i = index + 2; i < expression.length; i += 2) {
-      const nextNode = this.nodeController(expression, i);
+    let parent = this.parse_mulls_t(expression, index);
+    while(index[0] < expression.length && (expression[index[0]].token == tokens.sign_plus || expression[index[0]].token == tokens.sign_minus)) {
+      const currentSign = expression[index[0]].token;
+      index[0]++;
+      const nextNode = this.parse_mulls_t(expression, index);
       const localParent = this.getNode(null);
       localParent.left = parent;
       localParent.right = nextNode;
-      localParent.sign = expression[i - 1].token;
+      localParent.sign = currentSign;
       parent = localParent;
     }
     return parent;
