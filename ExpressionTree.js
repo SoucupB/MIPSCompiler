@@ -1,4 +1,3 @@
-const { example, expressionExample } = require('./Example')
 const { tokens } = require('./Token')
 const { Register, RegisterEmbed } = require('./Register')
 
@@ -33,6 +32,13 @@ class ExpressionTree {
   toRegister() {
     this.toRegister_t(this.root);
     return this.registerEmbed;
+  }
+
+  getExpressionRegisterIndex() {
+    if(!this.registerEmbed.length) {
+      return null;
+    }
+    return this.registerEmbed[this.registerEmbed.length - 1].params[0];
   }
 
   toRegister_t(node) {
