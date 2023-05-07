@@ -64,6 +64,9 @@ class Compiler {
         if(!this._registerVariable(code[i][1].payload)) {
           break;
         }
+        if(!this._registerExpression(code[i][2].payload, code[i][1].payload)) {
+          break;
+        }
       }
     }
     if(this.errors.length) {
