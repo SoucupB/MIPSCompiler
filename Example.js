@@ -69,9 +69,6 @@ const expressionExample = {
       token: tokens.sign_mul,
     },
     {
-      token: tokens.sign_open_paranth,
-    },
-    {
       token: tokens.constant_token,
       value: 14
     },
@@ -81,9 +78,6 @@ const expressionExample = {
     {
       token: tokens.constant_token,
       value: 36
-    },
-    {
-      token: tokens.sign_close_paranth,
     },
     {
       token: tokens.sign_mul,
