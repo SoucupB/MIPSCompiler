@@ -48,13 +48,13 @@ test('check if its generates correct expression tree', () => {
   const expTree = new ExpressionTree();
   expTree.create(expression.payload)
   expect(areRegistersEqual(expTree.toRegister(), [
-    new RegisterEmbed('mov', [0, 5]),
-    new RegisterEmbed('mov', [1, 14]),
-    new RegisterEmbed('mul', [2, 0, 1]),
-    new RegisterEmbed('mov', [0, 36]),
-    new RegisterEmbed('mov', [1, 23]),
-    new RegisterEmbed('mul', [3, 0, 1]),
-    new RegisterEmbed('add', [0, 2, 3]),
+    new RegisterEmbed('mov', [3, 5]),
+    new RegisterEmbed('mov', [4, 14]),
+    new RegisterEmbed('mul', [5, 3, 4]),
+    new RegisterEmbed('mov', [3, 36]),
+    new RegisterEmbed('mov', [4, 23]),
+    new RegisterEmbed('mul', [6, 3, 4]),
+    new RegisterEmbed('add', [3, 5, 6]),
   ])).toBe(true)
   expect(expTree.getExpressionRegisterIndex() == 0)
 });
@@ -79,9 +79,9 @@ test('check if it generates simple trees', () => {
   const expTree = new ExpressionTree();
   expTree.create(expression.payload)
   expect(areRegistersEqual(expTree.toRegister(), [
-    new RegisterEmbed('mov', [0, 5]),
-    new RegisterEmbed('mov', [1, 14]),
-    new RegisterEmbed('mul', [2, 0, 1])
+    new RegisterEmbed('mov', [3, 5]),
+    new RegisterEmbed('mov', [4, 14]),
+    new RegisterEmbed('mul', [5, 3, 4])
   ])).toBe(true)
   expect(expTree.getExpressionRegisterIndex() == 2)
 });
@@ -112,9 +112,9 @@ test('check if it generates simple trees v1', () => {
   const expTree = new ExpressionTree();
   expTree.create(expression.payload)
   expect(areRegistersEqual(expTree.toRegister(), [
-    new RegisterEmbed('mov', [0, 5]),
-    new RegisterEmbed('mov', [1, 14]),
-    new RegisterEmbed('mul', [2, 0, 1])
+    new RegisterEmbed('mov', [3, 5]),
+    new RegisterEmbed('mov', [4, 14]),
+    new RegisterEmbed('mul', [5, 3, 4])
   ])).toBe(true)
   expect(expTree.getExpressionRegisterIndex() == 2)
 });
@@ -152,11 +152,11 @@ test('check if it generates simple trees v2', () => {
   const expTree = new ExpressionTree();
   expTree.create(expression.payload)
   expect(areRegistersEqual(expTree.toRegister(), [
-    new RegisterEmbed('mov', [0, 5]),
-    new RegisterEmbed('mov', [1, 14]),
-    new RegisterEmbed('add', [2, 0, 1]),
-    new RegisterEmbed('mov', [0, 7]),
-    new RegisterEmbed('mul', [1, 2, 0])
+    new RegisterEmbed('mov', [3, 5]),
+    new RegisterEmbed('mov', [4, 14]),
+    new RegisterEmbed('add', [5, 3, 4]),
+    new RegisterEmbed('mov', [3, 7]),
+    new RegisterEmbed('mul', [4, 5, 3])
   ])).toBe(true)
   expect(expTree.getExpressionRegisterIndex() == 1)
 });

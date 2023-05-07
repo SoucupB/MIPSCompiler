@@ -7,7 +7,7 @@ class ExpressionTree {
   constructor() {
     this.root = new ExpressionNode();
     this.registers = new Register();
-    this.registerEmbed = [];
+    this.asm = [];
     this.registerIDs = {};
   }
 
@@ -31,14 +31,14 @@ class ExpressionTree {
 
   toRegister() {
     this.toRegister_t(this.root);
-    return this.registerEmbed;
+    return this.asm;
   }
 
   getExpressionRegisterIndex() {
-    if(!this.registerEmbed.length) {
+    if(!this.asm.length) {
       return null;
     }
-    return this.registerEmbed[this.registerEmbed.length - 1].params[0];
+    return this.asm[this.asm.length - 1].params[0];
   }
 
   toRegister_t(node) {
@@ -47,17 +47,17 @@ class ExpressionTree {
     }
     const left = this.toRegister_t(node.left);
     if(left.value) {
-      this.registerEmbed.push(new RegisterEmbed('mov', [this._getRegisterValue(left), left.value]));
+      this.asm.push(new RegisterEmbed('mov', [this._getRegisterValue(left), left.value]));
     }
     const right = this.toRegister_t(node.right);
     if(right.value) {
-      this.registerEmbed.push(new RegisterEmbed('mov', [this._getRegisterValue(right), right.value]));
+      this.asm.push(new RegisterEmbed('mov', [this._getRegisterValue(right), right.value]));
     }
     switch(node.sign) {
       case tokens.sign_plus: {
         const leftReg = this._getRegisterValue(left);
         const rightReg = this._getRegisterValue(right);
-        this.registerEmbed.push(new RegisterEmbed('add', [this._getRegisterValue(node), leftReg, rightReg]));
+        this.asm.push(new RegisterEmbed('add', [this._getRegisterValue(node), leftReg, rightReg]));
         this._freeRegisters(left);
         this._freeRegisters(right);
         break;
@@ -65,7 +65,7 @@ class ExpressionTree {
       case tokens.sign_minus: {
         const leftReg = this._getRegisterValue(left);
         const rightReg = this._getRegisterValue(right);
-        this.registerEmbed.push(new RegisterEmbed('sub', [this._getRegisterValue(node), leftReg, rightReg]));
+        this.asm.push(new RegisterEmbed('sub', [this._getRegisterValue(node), leftReg, rightReg]));
         this._freeRegisters(left);
         this._freeRegisters(right);
         break;
@@ -73,7 +73,7 @@ class ExpressionTree {
       case tokens.sign_mul: {
         const leftReg = this._getRegisterValue(left);
         const rightReg = this._getRegisterValue(right);
-        this.registerEmbed.push(new RegisterEmbed('mul', [this._getRegisterValue(node), leftReg, rightReg]));
+        this.asm.push(new RegisterEmbed('mul', [this._getRegisterValue(node), leftReg, rightReg]));
         this._freeRegisters(left);
         this._freeRegisters(right);
         break;
@@ -81,7 +81,7 @@ class ExpressionTree {
       case tokens.sign_div: {
         const leftReg = this._getRegisterValue(left);
         const rightReg = this._getRegisterValue(right);
-        this.registerEmbed.push(new RegisterEmbed('div', [this._getRegisterValue(node), leftReg, rightReg]));
+        this.asm.push(new RegisterEmbed('div', [this._getRegisterValue(node), leftReg, rightReg]));
         this._freeRegisters(left);
         this._freeRegisters(right);
         break;

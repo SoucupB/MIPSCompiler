@@ -10,6 +10,7 @@ class Compiler {
     this.errors = [];
     this.variables = new Variables();
     this.expressionTree = new ExpressionTree();
+    this.asm = []
   }
 
   _isInitializationCorrect(code) {
@@ -24,16 +25,27 @@ class Compiler {
   }
 
   _registerVariable(variableName) {
-
+    if(this.variables.isVariableDefined(variableName)) {
+      this.errors.push(`Error, variable "${variableName}" is already defined!`)
+      return false;
+    }
+    this.variables.defineVariable(variableName);
+    return true;
   }
 
   compile() {
     const code = this.code;
     for(let i = 0, c = code.length; i < c; i++) {
       if(this._isInitializationCorrect(code[i])) {
-
+        if(!this._registerVariable(code[i][1].payload)) {
+          break;
+        }
       }
     }
+    if(this.errors.length) {
+      return false;
+    }
+    return true;
   }
 }
 

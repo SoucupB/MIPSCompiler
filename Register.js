@@ -2,14 +2,15 @@ class Register {
   constructor(numberOfRegisters = 16) {
     this.emptyRegisters = {};
     this.numberOfRegisters = numberOfRegisters;
+    this.firstRegister = 3;
   }
 
   getEmptyRegister() {
     if(Object.entries(this.emptyRegisters).length === 0) {
-      this._fillRegister(0);
-      return 0;
+      this._fillRegister(this.firstRegister);
+      return this.firstRegister;
     }
-    for(let i = 0, c = this.numberOfRegisters; i < c; i++) {
+    for(let i = this.firstRegister, c = this.numberOfRegisters; i < c; i++) {
       if(!(i in this.emptyRegisters) || this.emptyRegisters[i] == true) {
         this._fillRegister(i);
         return i;
