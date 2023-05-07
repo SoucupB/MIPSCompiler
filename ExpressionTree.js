@@ -22,10 +22,10 @@ class ExpressionTree {
   }
 
   _freeRegisters(node) {
-    const currentReg = this.registerIDs[node.id];
-    if(!currentReg) {
+    if(!(node.id in this.registerIDs)) {
       return ;
     }
+    const currentReg = this.registerIDs[node.id];
     delete this.registerIDs[node.id];
     this.registers.freeRegister(currentReg);
   }
