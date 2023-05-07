@@ -1,4 +1,4 @@
-const { tokens, newRowExpectation, usedTokens } = require('./Token')
+const { usedTokens } = require('./Token')
 
 class Variables {
   constructor() {

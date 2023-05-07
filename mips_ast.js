@@ -1,6 +1,4 @@
 const Utils = require('./Utils');
-const AstNode = require('./AstNode');
-const { tokens, newRowExpectation } = require('./Token')
 const Variables = require('./Variables')
 
 class MipsAstParser {

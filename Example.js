@@ -3,7 +3,7 @@ const { tokens } = require('./Token')
 
 const example = [
   {
-    token: 'initizalization',
+    token: 'initialization',
     payload: [
       {
         token: tokens.data_type,
