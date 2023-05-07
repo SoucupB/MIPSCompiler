@@ -11,6 +11,8 @@ class Compiler {
     this.variables = new Variables();
     this.expressionTree = new ExpressionTree();
     this.asm = []
+    this.variableMemory = {};
+    this.variableLoaderRegister = 0;
   }
 
   _isInitializationCorrect(code) {
@@ -29,7 +31,29 @@ class Compiler {
       this.errors.push(`Error, variable "${variableName}" is already defined!`)
       return false;
     }
-    this.variables.defineVariable(variableName);
+    this.variableMemory[variableName] = this.variables.getVariableMemory(variableName);
+    return true;
+  }
+
+  _variableMemory(variableName) {
+    return this.variables.getVariableMemory(variableName);
+  }
+
+  _registerExpression(expression, variableName) {
+    if(code.payload.length === 3) {
+      this.expressionTree.create(expression)
+      const asmIntructions = this.expressionTree.toRegister();
+      for(let i = 0, c = asmIntructions.length; i < c; i++) {
+        this.asm.push(asmIntructions[i]);
+      }
+      const resultRegister = this.expressionTree.getExpressionRegisterIndex();
+      if(resultRegister === null) {
+        this.errors.push("Error in parsing expression");
+        return false;
+      }
+      this.asm.push(new RegisterEmbed('mov', [`[${this._variableMemory(variableName)}]`, resultRegister]))
+      return true;
+    }
     return true;
   }
 
