@@ -12,7 +12,7 @@ for(i = 0; i < ana; i++) {
 `
 
 const codeToCompile2 = `
-int7_t ana = 5;
+int7_t ana = 5 + 33;
 `
 
 const mips = new MipsAstParser({
