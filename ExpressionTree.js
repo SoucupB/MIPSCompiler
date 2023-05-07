@@ -32,7 +32,7 @@ class ExpressionTree {
 
   toRegister() {
     this.toRegister_t(this.root);
-    console.log(this.registerEmbed)
+    return this.registerEmbed;
   }
 
   toRegister_t(node) {
@@ -142,6 +142,4 @@ class ExpressionNode {
   }
 }
 
-const expTree = new ExpressionTree();
-expTree.create(expressionExample.payload)
-console.log(expTree.toRegister());
+module.exports = ExpressionTree;
