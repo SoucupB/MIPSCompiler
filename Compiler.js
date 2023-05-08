@@ -51,6 +51,7 @@ class Compiler {
       return false;
     }
     this.asm.push(new RegisterEmbed('mov', [`[${this._variableMemory(variableName)}]`, resultRegister])) // do to
+    this.expressionTree.freeRegisterByNumber(resultRegister)
     return true;
   }
 
@@ -105,7 +106,4 @@ class Compiler {
   }
 }
 
-const code = new Compiler(example);
-code.compile()
-console.log(code.asm)
-// module.exports = Compiler;
+module.exports = Compiler;

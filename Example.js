@@ -18,14 +18,14 @@ const example = [
         payload: [
           {
             token: tokens.constant_token,
-            value: '5'
+            value: 1
           },
           {
             token: tokens.sign_plus,
           },
           {
             token: tokens.constant_token,
-            value: '33'
+            value: 2
           }
         ]
       }

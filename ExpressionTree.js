@@ -10,22 +10,31 @@ class ExpressionTree {
     this.registerIDs = {};
   }
 
-  _getRegisterValue(node) {
-    if(node.id in this.registerIDs) {
-      return this.registerIDs[node.id];
+  _getRegisterValue(node_id) {
+    if(node_id in this.registerIDs) {
+      return this.registerIDs[node_id];
     }
     const newReg = this.registers.getEmptyRegister();
-    this.registerIDs[node.id] = newReg
+    this.registerIDs[node_id] = newReg
     return newReg;
   }
 
-  _freeRegisters(node) {
-    if(!(node.id in this.registerIDs)) {
+  _freeRegisters(node_id) {
+    if(!(node_id in this.registerIDs)) {
       return ;
     }
-    const currentReg = this.registerIDs[node.id];
-    delete this.registerIDs[node.id];
+    const currentReg = this.registerIDs[node_id];
+    delete this.registerIDs[node_id];
     this.registers.freeRegister(currentReg);
+  }
+
+  freeRegisterByNumber(register) {
+    for(const [key, value] of Object.entries(this.registerIDs)) {
+      if(value == register) {
+        this._freeRegisters(key);
+        return ;
+      }
+    }
   }
 
   toRegister() {
@@ -47,43 +56,43 @@ class ExpressionTree {
     }
     const left = this.toRegister_t(node.left, asm);
     if(left.value) {
-      asm.push(new RegisterEmbed('mov', [this._getRegisterValue(left), left.value]));
+      asm.push(new RegisterEmbed('mov', [this._getRegisterValue(left.id), left.value]));
     }
     const right = this.toRegister_t(node.right, asm);
     if(right.value) {
-      asm.push(new RegisterEmbed('mov', [this._getRegisterValue(right), right.value]));
+      asm.push(new RegisterEmbed('mov', [this._getRegisterValue(right.id), right.value]));
     }
     switch(node.sign) {
       case tokens.sign_plus: {
-        const leftReg = this._getRegisterValue(left);
-        const rightReg = this._getRegisterValue(right);
-        asm.push(new RegisterEmbed('add', [this._getRegisterValue(node), leftReg, rightReg]));
-        this._freeRegisters(left);
-        this._freeRegisters(right);
+        const leftReg = this._getRegisterValue(left.id);
+        const rightReg = this._getRegisterValue(right.id);
+        asm.push(new RegisterEmbed('add', [this._getRegisterValue(node.id), leftReg, rightReg]));
+        this._freeRegisters(left.id);
+        this._freeRegisters(right.id);
         break;
       }
       case tokens.sign_minus: {
-        const leftReg = this._getRegisterValue(left);
-        const rightReg = this._getRegisterValue(right);
-        asm.push(new RegisterEmbed('sub', [this._getRegisterValue(node), leftReg, rightReg]));
-        this._freeRegisters(left);
-        this._freeRegisters(right);
+        const leftReg = this._getRegisterValue(left.id);
+        const rightReg = this._getRegisterValue(right.id);
+        asm.push(new RegisterEmbed('sub', [this._getRegisterValue(node.id), leftReg, rightReg]));
+        this._freeRegisters(left.id);
+        this._freeRegisters(right.id);
         break;
       }
       case tokens.sign_mul: {
-        const leftReg = this._getRegisterValue(left);
-        const rightReg = this._getRegisterValue(right);
-        asm.push(new RegisterEmbed('mul', [this._getRegisterValue(node), leftReg, rightReg]));
-        this._freeRegisters(left);
-        this._freeRegisters(right);
+        const leftReg = this._getRegisterValue(left.id);
+        const rightReg = this._getRegisterValue(right.id);
+        asm.push(new RegisterEmbed('mul', [this._getRegisterValue(node.id), leftReg, rightReg]));
+        this._freeRegisters(left.id);
+        this._freeRegisters(right.id);
         break;
       }
       case tokens.sign_div: {
-        const leftReg = this._getRegisterValue(left);
-        const rightReg = this._getRegisterValue(right);
-        asm.push(new RegisterEmbed('div', [this._getRegisterValue(node), leftReg, rightReg]));
-        this._freeRegisters(left);
-        this._freeRegisters(right);
+        const leftReg = this._getRegisterValue(left.id);
+        const rightReg = this._getRegisterValue(right.id);
+        asm.push(new RegisterEmbed('div', [this._getRegisterValue(node.id), leftReg, rightReg]));
+        this._freeRegisters(left.id);
+        this._freeRegisters(right.id);
         break;
       }
     }
