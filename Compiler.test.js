@@ -15,7 +15,7 @@ function areRegistersEqual(src, dst) {
   return true;
 }
 
-test('check if its generates correct expression tree', () => {
+test('correct compilation v1', () => {
   const toCompile = [
     {
       token: 'initialization',
@@ -83,5 +83,99 @@ test('check if its generates correct expression tree', () => {
     new RegisterEmbed('mov', [4, 36]),
     new RegisterEmbed('add', [5, 3, 4]),
     new RegisterEmbed('mov', ['[0]', 5]),
+  ])).toBe(true)
+});
+
+test('correct compilation v2', () => {
+  const toCompile = [
+    {
+      token: 'initialization',
+      payload: [
+        {
+          token: tokens.data_type,
+          payload: 'int7_t'
+        },
+        {
+          token: tokens.variable,
+          payload: 'a'
+        },
+        {
+          token: tokens.expression,
+          payload: [
+            {
+              token: tokens.constant_token,
+              value: 1
+            },
+            {
+              token: tokens.sign_plus,
+            },
+            {
+              token: tokens.constant_token,
+              value: 2
+            },
+            {
+              token: tokens.sign_mul,
+            },
+            {
+              token: tokens.constant_token,
+              value: 5
+            },
+            {
+              token: tokens.sign_mul,
+            },
+            {
+              token: tokens.constant_token,
+              value: 6
+            }
+          ]
+        }
+      ]
+    },
+  ]
+  const code = new Compiler(toCompile);
+  code.compile()
+  expect(areRegistersEqual(code.asm, [
+    new RegisterEmbed('mov', [3, 1]),
+    new RegisterEmbed('mov', [4, 2]),
+    new RegisterEmbed('mov', [5, 5]),
+    new RegisterEmbed('mul', [6, 4, 5]),
+    new RegisterEmbed('mov', [4, 6]),
+    new RegisterEmbed('mul', [5, 6, 4]),
+    new RegisterEmbed('add', [4, 3, 5]),
+    new RegisterEmbed('mov', ['[0]', 4]),
+  ])).toBe(true)
+});
+
+test('correct compilation v3', () => {
+  const toCompile = [
+    {
+      token: 'initialization',
+      payload: [
+        {
+          token: tokens.data_type,
+          payload: 'int7_t'
+        },
+        {
+          token: tokens.variable,
+          payload: 'a'
+        },
+        {
+          token: tokens.expression,
+          payload: [
+            {
+              token: tokens.constant_token,
+              value: 1
+            }
+          ]
+        }
+      ]
+    },
+  ]
+  const code = new Compiler(toCompile);
+  code.compile()
+  console.log(code.asm)
+  expect(areRegistersEqual(code.asm, [
+    new RegisterEmbed('mov', [3, 1]),
+    new RegisterEmbed('mov', ['[0]', 3]),
   ])).toBe(true)
 });

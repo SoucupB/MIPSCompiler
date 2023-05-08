@@ -164,3 +164,22 @@ test('check if it generates simple trees v2', () => {
   ])).toBe(true)
   expect(expTree.getExpressionRegisterIndex(asm) == 1)
 });
+
+test('generate 1 node tree', () => {
+  const expression = {
+    token: tokens.expression,
+    payload: [
+      {
+        token: tokens.constant_token,
+        value: 5
+      },
+    ]
+  }
+  const expTree = new ExpressionTree();
+  expTree.create(expression.payload)
+  const asm = expTree.toRegister();
+  expect(areRegistersEqual(asm, [
+    new RegisterEmbed('mov', [3, 5]),
+  ])).toBe(true)
+  expect(expTree.getExpressionRegisterIndex(asm) == 2)
+});

@@ -52,16 +52,11 @@ class ExpressionTree {
 
   toRegister_t(node, asm) {
     if(node.left == null && node.right == null) {
+      asm.push(new RegisterEmbed('mov', [this._getRegisterValue(node.id), node.value]));
       return node;
     }
     const left = this.toRegister_t(node.left, asm);
-    if(left.value) {
-      asm.push(new RegisterEmbed('mov', [this._getRegisterValue(left.id), left.value]));
-    }
     const right = this.toRegister_t(node.right, asm);
-    if(right.value) {
-      asm.push(new RegisterEmbed('mov', [this._getRegisterValue(right.id), right.value]));
-    }
     switch(node.sign) {
       case tokens.sign_plus: {
         const leftReg = this._getRegisterValue(left.id);
