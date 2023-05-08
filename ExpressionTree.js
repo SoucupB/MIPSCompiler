@@ -58,44 +58,36 @@ class ExpressionTree {
     return new RegisterEmbed('mov', [this._getRegisterValue(node.id), `[${this.variables.getVariableMemory(node.value)}]`]);
   }
 
+  _addRegisterToAsm(regName, node, asm) {
+    const leftReg = this._getRegisterValue(node.left.id);
+    const rightReg = this._getRegisterValue(node.right.id);
+    asm.push(new RegisterEmbed(regName, [this._getRegisterValue(node.id), leftReg, rightReg]));
+    this._freeRegisters(node.left.id);
+    this._freeRegisters(node.right.id);
+  }
+
   toRegister_t(node, asm) {
     if(node.left == null && node.right == null) {
       asm.push(this.pushAssignationAsm(node));
       return node;
     }
-    const left = this.toRegister_t(node.left, asm);
-    const right = this.toRegister_t(node.right, asm);
+    this.toRegister_t(node.left, asm);
+    this.toRegister_t(node.right, asm);
     switch(node.sign) {
       case tokens.sign_plus: {
-        const leftReg = this._getRegisterValue(left.id);
-        const rightReg = this._getRegisterValue(right.id);
-        asm.push(new RegisterEmbed('add', [this._getRegisterValue(node.id), leftReg, rightReg]));
-        this._freeRegisters(left.id);
-        this._freeRegisters(right.id);
+        this._addRegisterToAsm('add', node, asm)
         break;
       }
       case tokens.sign_minus: {
-        const leftReg = this._getRegisterValue(left.id);
-        const rightReg = this._getRegisterValue(right.id);
-        asm.push(new RegisterEmbed('sub', [this._getRegisterValue(node.id), leftReg, rightReg]));
-        this._freeRegisters(left.id);
-        this._freeRegisters(right.id);
+        this._addRegisterToAsm('sub', node, asm)
         break;
       }
       case tokens.sign_mul: {
-        const leftReg = this._getRegisterValue(left.id);
-        const rightReg = this._getRegisterValue(right.id);
-        asm.push(new RegisterEmbed('mul', [this._getRegisterValue(node.id), leftReg, rightReg]));
-        this._freeRegisters(left.id);
-        this._freeRegisters(right.id);
+        this._addRegisterToAsm('mul', node, asm)
         break;
       }
       case tokens.sign_div: {
-        const leftReg = this._getRegisterValue(left.id);
-        const rightReg = this._getRegisterValue(right.id);
-        asm.push(new RegisterEmbed('div', [this._getRegisterValue(node.id), leftReg, rightReg]));
-        this._freeRegisters(left.id);
-        this._freeRegisters(right.id);
+        this._addRegisterToAsm('div', node, asm)
         break;
       }
     }
