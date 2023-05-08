@@ -202,3 +202,69 @@ test('correct compilation v3', () => {
     new RegisterEmbed('mov', ['[1]', 3]),
   ])).toBe(true)
 });
+
+test('correct compilation v4', () => {
+  const toCompile = [
+    {
+      token: 'initialization',
+      payload: [
+        {
+          token: tokens.data_type,
+          payload: 'int7_t'
+        },
+        {
+          token: tokens.variable,
+          payload: 'a'
+        },
+        {
+          token: tokens.expression,
+          payload: [
+            {
+              token: tokens.constant_token,
+              value: 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      token: 'initialization',
+      payload: [
+        {
+          token: tokens.data_type,
+          payload: 'int7_t'
+        },
+        {
+          token: tokens.variable,
+          payload: 'b'
+        }
+      ]
+    },
+    {
+      token: 'assignation',
+      payload: [
+        {
+          token: tokens.data_type,
+          payload: 'b'
+        },
+        {
+          token: tokens.expression,
+          payload: [
+            {
+              token: tokens.constant_token,
+              value: 5
+            }
+          ]
+        }
+      ]
+    },
+  ]
+  const code = new Compiler(toCompile);
+  code.compile()
+  expect(areRegistersEqual(code.asm, [
+    new RegisterEmbed('mov', [3, 1]),
+    new RegisterEmbed('mov', ['[0]', 3]),
+    new RegisterEmbed('mov', [3, 5]),
+    new RegisterEmbed('mov', ['[1]', 3]),
+  ])).toBe(true)
+});
