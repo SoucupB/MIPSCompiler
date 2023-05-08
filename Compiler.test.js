@@ -63,9 +63,10 @@ function createExpression(payload) {
         break;
       }
       default: {
+        const isNum = isNumber(payload[i]);
         response.push({
-          token: tokens.constant_token,
-          value: isNumber(payload[i]) ? parseInt(payload[i]) : payload[i]
+          token: isNum ? tokens.constant_token : tokens.variable,
+          value: isNum ? parseInt(payload[i]) : payload[i]
         })
         break;
       }
