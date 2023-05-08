@@ -15,62 +15,111 @@ function areRegistersEqual(src, dst) {
   return true;
 }
 
+function isNumber(number) {
+  if (!isNaN(Number(number))) {
+    return true
+  }
+  return false;
+}
+
+// createAssignationPayload(['yolo', '5', '+', '36'])
+function createExpression(payload) {
+  let response = [];
+  for(let i = 0; i < payload.length; i++) {
+    switch(payload[i]) {
+      case '+': {
+        response.push({
+          token: tokens.sign_plus
+        })
+        break;
+      }
+      case '-': {
+        response.push({
+          token: tokens.sign_minus
+        })
+        break;
+      }
+      case '*': {
+        response.push({
+          token: tokens.sign_mul
+        })
+        break;
+      }
+      case '/': {
+        response.push({
+          token: tokens.sign_div
+        })
+        break;
+      }
+      case '(': {
+        response.push({
+          token: tokens.sign_open_paranth
+        })
+        break;
+      }
+      case ')': {
+        response.push({
+          token: tokens.sign_close_paranth
+        })
+        break;
+      }
+      default: {
+        response.push({
+          token: tokens.constant_token,
+          value: isNumber(payload[i]) ? parseInt(payload[i]) : payload[i]
+        })
+        break;
+      }
+    }
+  }
+  return response;
+}
+
+function createAssignationPayload(payloadData) {
+  return {
+    token: 'assignation',
+    payload: [
+      {
+        token: tokens.variable,
+        payload: payloadData[0]
+      },
+      {
+        token: tokens.expression,
+        payload: createExpression(payloadData.slice(-(payloadData.length - 1)))
+      }
+    ]
+  }
+}
+
+function createInitializationPayload(payloadData) {
+  const payload = {
+    token: 'initialization',
+    payload: [
+      {
+        token: tokens.data_type,
+        payload: payloadData[0]
+      },
+      {
+        token: tokens.variable,
+        payload: payloadData[1]
+      },
+    ]
+  };
+  const expression = payloadData.slice(-(payloadData.length - 2));
+  if(payloadData.length > 2) {
+    payload.payload.push({
+      token: tokens.expression,
+      payload: createExpression(expression)
+    })
+  }
+
+  return payload
+}
+
 test('correct compilation v1', () => {
   const toCompile = [
-    {
-      token: 'initialization',
-      payload: [
-        {
-          token: tokens.data_type,
-          payload: 'int7_t'
-        },
-        {
-          token: tokens.variable,
-          payload: 'yolo'
-        },
-        {
-          token: tokens.expression,
-          payload: [
-            {
-              token: tokens.constant_token,
-              value: 1
-            },
-            {
-              token: tokens.sign_plus,
-            },
-            {
-              token: tokens.constant_token,
-              value: 2
-            }
-          ]
-        }
-      ]
-    },
-    {
-      token: 'assignation',
-      payload: [
-        {
-          token: tokens.variable,
-          payload: 'yolo'
-        },
-        {
-          token: tokens.expression,
-          payload: [
-            {
-              token: tokens.constant_token,
-              value: 5
-            },
-            {
-              token: tokens.sign_plus,
-            },
-            {
-              token: tokens.constant_token,
-              value: 36
-            }
-          ]
-        }
-      ]
-    }
+    createInitializationPayload(['int7_t', 'yolo', '1', '+', '2']),
+    createAssignationPayload(['yolo', '5', '+', '36'])
   ]
   const code = new Compiler(toCompile);
   code.compile()
@@ -88,49 +137,7 @@ test('correct compilation v1', () => {
 
 test('correct compilation v2', () => {
   const toCompile = [
-    {
-      token: 'initialization',
-      payload: [
-        {
-          token: tokens.data_type,
-          payload: 'int7_t'
-        },
-        {
-          token: tokens.variable,
-          payload: 'a'
-        },
-        {
-          token: tokens.expression,
-          payload: [
-            {
-              token: tokens.constant_token,
-              value: 1
-            },
-            {
-              token: tokens.sign_plus,
-            },
-            {
-              token: tokens.constant_token,
-              value: 2
-            },
-            {
-              token: tokens.sign_mul,
-            },
-            {
-              token: tokens.constant_token,
-              value: 5
-            },
-            {
-              token: tokens.sign_mul,
-            },
-            {
-              token: tokens.constant_token,
-              value: 6
-            }
-          ]
-        }
-      ]
-    },
+    createInitializationPayload(['int7_t', 'a', '1', '+', '2', '*', '5', '*', '6']),
   ]
   const code = new Compiler(toCompile);
   code.compile()
@@ -148,50 +155,8 @@ test('correct compilation v2', () => {
 
 test('correct compilation v3', () => {
   const toCompile = [
-    {
-      token: 'initialization',
-      payload: [
-        {
-          token: tokens.data_type,
-          payload: 'int7_t'
-        },
-        {
-          token: tokens.variable,
-          payload: 'a'
-        },
-        {
-          token: tokens.expression,
-          payload: [
-            {
-              token: tokens.constant_token,
-              value: 1
-            }
-          ]
-        }
-      ]
-    },
-    {
-      token: 'initialization',
-      payload: [
-        {
-          token: tokens.data_type,
-          payload: 'int7_t'
-        },
-        {
-          token: tokens.variable,
-          payload: 'b'
-        },
-        {
-          token: tokens.expression,
-          payload: [
-            {
-              token: tokens.constant_token,
-              value: 3
-            }
-          ]
-        }
-      ]
-    },
+    createInitializationPayload(['int7_t', 'a', '1']),
+    createInitializationPayload(['int7_t', 'b', '3']),
   ]
   const code = new Compiler(toCompile);
   code.compile()
@@ -205,59 +170,9 @@ test('correct compilation v3', () => {
 
 test('correct compilation v4', () => {
   const toCompile = [
-    {
-      token: 'initialization',
-      payload: [
-        {
-          token: tokens.data_type,
-          payload: 'int7_t'
-        },
-        {
-          token: tokens.variable,
-          payload: 'a'
-        },
-        {
-          token: tokens.expression,
-          payload: [
-            {
-              token: tokens.constant_token,
-              value: 1
-            }
-          ]
-        }
-      ]
-    },
-    {
-      token: 'initialization',
-      payload: [
-        {
-          token: tokens.data_type,
-          payload: 'int7_t'
-        },
-        {
-          token: tokens.variable,
-          payload: 'b'
-        }
-      ]
-    },
-    {
-      token: 'assignation',
-      payload: [
-        {
-          token: tokens.data_type,
-          payload: 'b'
-        },
-        {
-          token: tokens.expression,
-          payload: [
-            {
-              token: tokens.constant_token,
-              value: 5
-            }
-          ]
-        }
-      ]
-    },
+    createInitializationPayload(['int7_t', 'a', '1']),
+    createInitializationPayload(['int7_t', 'b']),
+    createAssignationPayload(['b', '5'])
   ]
   const code = new Compiler(toCompile);
   code.compile()
