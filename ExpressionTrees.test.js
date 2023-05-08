@@ -96,19 +96,7 @@ test('check if its generates correct expression tree', () => {
 test('check if it generates simple trees', () => {
   const expression = {
     token: tokens.expression,
-    payload: [
-      {
-        token: tokens.constant_token,
-        value: 5
-      },
-      {
-        token: tokens.sign_mul,
-      },
-      {
-        token: tokens.constant_token,
-        value: 14
-      }
-    ]
+    payload: createExpression(['(', '5', '*', '14', ')'])
   }
   const expTree = new ExpressionTree();
   expTree.create(expression.payload)
