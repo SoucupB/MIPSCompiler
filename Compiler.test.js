@@ -183,3 +183,57 @@ test('correct compilation v4', () => {
     new RegisterEmbed('mov', ['[1]', 3]),
   ])).toBe(true)
 });
+
+test('correct expression with variables', () => {
+  const toCompile = [
+    createInitializationPayload(['int7_t', 'a', '1']),
+    createInitializationPayload(['int7_t', 'b', '1', '+', 'a']),
+  ]
+  const code = new Compiler(toCompile);
+  code.compile()
+  expect(areRegistersEqual(code.asm, [
+    new RegisterEmbed('mov', [3, 1]),
+    new RegisterEmbed('mov', ['[0]', 3]),
+    new RegisterEmbed('mov', [3, 1]),
+    new RegisterEmbed('mov', [4, '[0]']),
+    new RegisterEmbed('add', [5, 3, 4]),
+    new RegisterEmbed('mov', ['[1]', 5]),
+  ])).toBe(true)
+});
+
+test('correct expression with variables v2', () => {
+  const toCompile = [
+    createInitializationPayload(['int7_t', 'a', '1']),
+    createInitializationPayload(['int7_t', 'b', '3', '+', 'a']),
+    createInitializationPayload(['int7_t', 'c', '3', '+', 'a', '*', 'b']),
+    createInitializationPayload(['int7_t', 'd', '3', '+', 'a', '*', '(', 'b', '+', 'c', ')']),
+  ]
+  const code = new Compiler(toCompile);
+  code.compile()
+  expect(areRegistersEqual(code.asm, [
+    new RegisterEmbed('mov', [3, 1]),
+    new RegisterEmbed('mov', ['[0]', 3]),
+    new RegisterEmbed('mov', [3, 3]),
+    new RegisterEmbed('mov', [4, '[0]']),
+    new RegisterEmbed('add', [5, 3, 4]),
+    new RegisterEmbed('mov', ['[1]', 5]),
+
+    
+    new RegisterEmbed('mov', [3, 3]),
+    new RegisterEmbed('mov', [4, '[0]']),
+    new RegisterEmbed('mov', [5, '[1]']),
+    new RegisterEmbed('mul', [6, 4, 5]),
+    new RegisterEmbed('add', [4, 3, 6]),
+    new RegisterEmbed('mov', ['[2]', 4]),
+
+    new RegisterEmbed('mov', [3, 3]),
+    new RegisterEmbed('mov', [4, '[0]']),
+    new RegisterEmbed('mov', [5, '[1]']),
+    new RegisterEmbed('mov', [6, '[2]']),
+
+    new RegisterEmbed('add', [7, 5, 6]),
+    new RegisterEmbed('mul', [5, 4, 7]),
+    new RegisterEmbed('add', [4, 3, 5]),
+    new RegisterEmbed('mov', ['[3]', 4]),
+  ])).toBe(true)
+});

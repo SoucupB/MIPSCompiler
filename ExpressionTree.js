@@ -51,9 +51,16 @@ class ExpressionTree {
     return asm[asm.length - 1].params[0];
   }
 
+  pushAssignationAsm(node) {
+    if(node.token == tokens.constant_token) {
+      return new RegisterEmbed('mov', [this._getRegisterValue(node.id), node.value]);
+    }
+    return new RegisterEmbed('mov', [this._getRegisterValue(node.id), `[${this.variables.getVariableMemory(node.value)}]`]);
+  }
+
   toRegister_t(node, asm) {
     if(node.left == null && node.right == null) {
-      asm.push(new RegisterEmbed('mov', [this._getRegisterValue(node.id), node.value]));
+      asm.push(this.pushAssignationAsm(node));
       return node;
     }
     const left = this.toRegister_t(node.left, asm);

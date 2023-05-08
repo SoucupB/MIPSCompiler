@@ -27,8 +27,8 @@ class Variables {
       return 0;
     }
     for(let i = 0; i < sortedValues.length - 1; i++) {
-      if(sortedValues[i] != sortedValues[i + 1] + 1) {
-        return sortedValues[i + 1] + 1;
+      if(sortedValues[i] + 1 != sortedValues[i + 1]) {
+        return sortedValues[i] + 1;
       }
     }
     return sortedValues[sortedValues.length - 1] + 1;
