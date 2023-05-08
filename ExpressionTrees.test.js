@@ -47,7 +47,8 @@ test('check if its generates correct expression tree', () => {
   }
   const expTree = new ExpressionTree();
   expTree.create(expression.payload)
-  expect(areRegistersEqual(expTree.toRegister(), [
+  const asm = expTree.toRegister();
+  expect(areRegistersEqual(asm, [
     new RegisterEmbed('mov', [3, 5]),
     new RegisterEmbed('mov', [4, 14]),
     new RegisterEmbed('mul', [5, 3, 4]),
@@ -56,7 +57,7 @@ test('check if its generates correct expression tree', () => {
     new RegisterEmbed('mul', [6, 3, 4]),
     new RegisterEmbed('add', [3, 5, 6]),
   ])).toBe(true)
-  expect(expTree.getExpressionRegisterIndex() == 0)
+  expect(expTree.getExpressionRegisterIndex(asm) == 0)
 });
 
 test('check if it generates simple trees', () => {
@@ -78,12 +79,13 @@ test('check if it generates simple trees', () => {
   }
   const expTree = new ExpressionTree();
   expTree.create(expression.payload)
-  expect(areRegistersEqual(expTree.toRegister(), [
+  const asm = expTree.toRegister();
+  expect(areRegistersEqual(asm, [
     new RegisterEmbed('mov', [3, 5]),
     new RegisterEmbed('mov', [4, 14]),
     new RegisterEmbed('mul', [5, 3, 4])
   ])).toBe(true)
-  expect(expTree.getExpressionRegisterIndex() == 2)
+  expect(expTree.getExpressionRegisterIndex(asm) == 2)
 });
 
 test('check if it generates simple trees v1', () => {
@@ -111,12 +113,13 @@ test('check if it generates simple trees v1', () => {
   }
   const expTree = new ExpressionTree();
   expTree.create(expression.payload)
-  expect(areRegistersEqual(expTree.toRegister(), [
+  const asm = expTree.toRegister()
+  expect(areRegistersEqual(asm, [
     new RegisterEmbed('mov', [3, 5]),
     new RegisterEmbed('mov', [4, 14]),
     new RegisterEmbed('mul', [5, 3, 4])
   ])).toBe(true)
-  expect(expTree.getExpressionRegisterIndex() == 2)
+  expect(expTree.getExpressionRegisterIndex(asm) == 2)
 });
 
 test('check if it generates simple trees v2', () => {
@@ -151,12 +154,13 @@ test('check if it generates simple trees v2', () => {
   }
   const expTree = new ExpressionTree();
   expTree.create(expression.payload)
-  expect(areRegistersEqual(expTree.toRegister(), [
+  const asm = expTree.toRegister()
+  expect(areRegistersEqual(asm, [
     new RegisterEmbed('mov', [3, 5]),
     new RegisterEmbed('mov', [4, 14]),
     new RegisterEmbed('add', [5, 3, 4]),
     new RegisterEmbed('mov', [3, 7]),
     new RegisterEmbed('mul', [4, 5, 3])
   ])).toBe(true)
-  expect(expTree.getExpressionRegisterIndex() == 1)
+  expect(expTree.getExpressionRegisterIndex(asm) == 1)
 });

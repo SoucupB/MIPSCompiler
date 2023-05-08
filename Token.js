@@ -7,7 +7,9 @@ const tokens = {
   sign_div: 5,
   sign_open_paranth: 6,
   sign_close_paranth: 7,
-  variable: 8
+  variable: 8,
+  data_type: 9,
+  expression: 10
 }
 
 module.exports = { tokens };
