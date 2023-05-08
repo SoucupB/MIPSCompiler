@@ -9,7 +9,7 @@ class Compiler {
     this.code = code;
     this.errors = [];
     this.variables = new Variables();
-    this.expressionTree = new ExpressionTree();
+    this.expressionTree = new ExpressionTree(this.variables);
     this.asm = []
     this.variableMemory = {};
     this.variableLoaderRegister = 0;

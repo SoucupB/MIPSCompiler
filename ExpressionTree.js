@@ -4,10 +4,11 @@ const { Register, RegisterEmbed } = require('./Register')
 let nodeID = 0;
 
 class ExpressionTree {
-  constructor() {
+  constructor(variables = null) {
     this.root = new ExpressionNode();
     this.registers = new Register();
     this.registerIDs = {};
+    this.variables = variables;
   }
 
   _getRegisterValue(node_id) {
@@ -120,14 +121,15 @@ class ExpressionNode {
       index[0]++;
       return resultNode;
     }
-    const node = this.getNode(exp[index[0]].value);
+    const node = this.getNode(exp[index[0]].value, exp[index[0]].token);
     index[0] += 1;
     return node;
   }
 
-  getNode(value) {
+  getNode(value, type = null) {
     const currentNode = new ExpressionNode();
-    currentNode.value = value
+    currentNode.value = value;
+    currentNode.token = type;
     return currentNode;
   }
 

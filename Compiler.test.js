@@ -22,7 +22,6 @@ function isNumber(number) {
   return false;
 }
 
-// createAssignationPayload(['yolo', '5', '+', '36'])
 function createExpression(payload) {
   let response = [];
   for(let i = 0; i < payload.length; i++) {
