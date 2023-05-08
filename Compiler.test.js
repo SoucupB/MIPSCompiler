@@ -205,8 +205,8 @@ test('correct expression with variables v2', () => {
   const toCompile = [
     createInitializationPayload(['int7_t', 'a', '1']),
     createInitializationPayload(['int7_t', 'b', '3', '+', 'a']),
-    createInitializationPayload(['int7_t', 'c', '3', '+', 'a', '*', 'b']),
-    createInitializationPayload(['int7_t', 'd', '3', '+', 'a', '*', '(', 'b', '+', 'c', ')']),
+    createInitializationPayload(['int7_t', 'c', '4', '+', 'a', '*', 'b']),
+    createInitializationPayload(['int7_t', 'd', '5', '+', 'a', '*', '(', 'b', '+', 'c', ')']),
   ]
   const code = new Compiler(toCompile);
   code.compile()
@@ -218,14 +218,14 @@ test('correct expression with variables v2', () => {
     new RegisterEmbed('add', [5, 3, 4]),
     new RegisterEmbed('mov', ['[1]', 5]),
 
-    new RegisterEmbed('mov', [3, 3]),
+    new RegisterEmbed('mov', [3, 4]),
     new RegisterEmbed('mov', [4, '[0]']),
     new RegisterEmbed('mov', [5, '[1]']),
     new RegisterEmbed('mul', [6, 4, 5]),
     new RegisterEmbed('add', [4, 3, 6]),
     new RegisterEmbed('mov', ['[2]', 4]),
 
-    new RegisterEmbed('mov', [3, 3]),
+    new RegisterEmbed('mov', [3, 5]),
     new RegisterEmbed('mov', [4, '[0]']),
     new RegisterEmbed('mov', [5, '[1]']),
     new RegisterEmbed('mov', [6, '[2]']),
