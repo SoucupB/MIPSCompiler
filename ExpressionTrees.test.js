@@ -14,36 +14,69 @@ function areRegistersEqual(src, dst) {
   return true;
 }
 
+function isNumber(number) {
+  if (!isNaN(Number(number))) {
+    return true
+  }
+  return false;
+}
+
+function createExpression(payload) {
+  let response = [];
+  for(let i = 0; i < payload.length; i++) {
+    switch(payload[i]) {
+      case '+': {
+        response.push({
+          token: tokens.sign_plus
+        })
+        break;
+      }
+      case '-': {
+        response.push({
+          token: tokens.sign_minus
+        })
+        break;
+      }
+      case '*': {
+        response.push({
+          token: tokens.sign_mul
+        })
+        break;
+      }
+      case '/': {
+        response.push({
+          token: tokens.sign_div
+        })
+        break;
+      }
+      case '(': {
+        response.push({
+          token: tokens.sign_open_paranth
+        })
+        break;
+      }
+      case ')': {
+        response.push({
+          token: tokens.sign_close_paranth
+        })
+        break;
+      }
+      default: {
+        response.push({
+          token: tokens.constant_token,
+          value: isNumber(payload[i]) ? parseInt(payload[i]) : payload[i]
+        })
+        break;
+      }
+    }
+  }
+  return response;
+}
+
 test('check if its generates correct expression tree', () => {
   const expression = {
     token: tokens.expression,
-    payload: [
-      {
-        token: tokens.constant_token,
-        value: 5
-      },
-      {
-        token: tokens.sign_mul,
-      },
-      {
-        token: tokens.constant_token,
-        value: 14
-      },
-      {
-        token: tokens.sign_plus,
-      },
-      {
-        token: tokens.constant_token,
-        value: 36
-      },
-      {
-        token: tokens.sign_mul,
-      },
-      {
-        token: tokens.constant_token,
-        value: 23
-      },
-    ]
+    payload: createExpression(['5', '*', '14', '+', '36', '*', '23'])
   }
   const expTree = new ExpressionTree();
   expTree.create(expression.payload)
@@ -91,25 +124,7 @@ test('check if it generates simple trees', () => {
 test('check if it generates simple trees v1', () => {
   const expression = {
     token: tokens.expression,
-    payload: [
-      {
-        token: tokens.sign_open_paranth
-      },
-      {
-        token: tokens.constant_token,
-        value: 5
-      },
-      {
-        token: tokens.sign_mul,
-      },
-      {
-        token: tokens.constant_token,
-        value: 14
-      },
-      {
-        token: tokens.sign_close_paranth
-      },
-    ]
+    payload: createExpression(['(', '5', '*', '14', ')'])
   }
   const expTree = new ExpressionTree();
   expTree.create(expression.payload)
@@ -125,32 +140,7 @@ test('check if it generates simple trees v1', () => {
 test('check if it generates simple trees v2', () => {
   const expression = {
     token: tokens.expression,
-    payload: [
-      {
-        token: tokens.sign_open_paranth
-      },
-      {
-        token: tokens.constant_token,
-        value: 5
-      },
-      {
-        token: tokens.sign_plus,
-      },
-      {
-        token: tokens.constant_token,
-        value: 14
-      },
-      {
-        token: tokens.sign_close_paranth
-      },
-      {
-        token: tokens.sign_mul,
-      },
-      {
-        token: tokens.constant_token,
-        value: 7
-      },
-    ]
+    payload: createExpression(['(', '5', '+', '14', ')', '*', '7'])
   }
   const expTree = new ExpressionTree();
   expTree.create(expression.payload)
@@ -168,12 +158,7 @@ test('check if it generates simple trees v2', () => {
 test('generate 1 node tree', () => {
   const expression = {
     token: tokens.expression,
-    payload: [
-      {
-        token: tokens.constant_token,
-        value: 5
-      },
-    ]
+    payload: createExpression(['5'])
   }
   const expTree = new ExpressionTree();
   expTree.create(expression.payload)
