@@ -218,7 +218,6 @@ test('correct expression with variables v2', () => {
     new RegisterEmbed('add', [5, 3, 4]),
     new RegisterEmbed('mov', ['[1]', 5]),
 
-    
     new RegisterEmbed('mov', [3, 3]),
     new RegisterEmbed('mov', [4, '[0]']),
     new RegisterEmbed('mov', [5, '[1]']),
