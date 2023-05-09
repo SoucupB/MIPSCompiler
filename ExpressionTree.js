@@ -110,7 +110,9 @@ class ExpressionNode {
   }
 
   parse(expression) {
-    return this.create_tree(expression, [0], 0, [[tokens.sign_plus, tokens.sign_minus],
+    return this.create_tree(expression, [0], 0, [[tokens.sign_double_and, tokens.sign_double_or],
+                                                 [tokens.sign_greater, tokens.sign_lower],
+                                                 [tokens.sign_plus, tokens.sign_minus],
                                                  [tokens.sign_mul, tokens.sign_div]]);
   }
 

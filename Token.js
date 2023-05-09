@@ -9,7 +9,11 @@ const tokens = {
   sign_close_paranth: 7,
   variable: 8,
   data_type: 9,
-  expression: 10
+  expression: 10,
+  sign_double_and: 11,
+  sign_double_or: 12,
+  sign_greater: 13,
+  sign_lower: 14,
 }
 
 module.exports = { tokens };
