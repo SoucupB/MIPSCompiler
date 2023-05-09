@@ -110,20 +110,8 @@ class ExpressionNode {
   }
 
   parse(expression) {
-    // return this.parse_sums_t(expression, [0]);
-    return this.parse_recursive(expression)
-  }
-
-  nodeController(exp, index) {
-    if(exp[index[0]].token == tokens.sign_open_paranth) {
-      index[0]++;
-      const resultNode = this.parse_sums_t(exp, index);
-      index[0]++;
-      return resultNode;
-    }
-    const node = this.getNode(exp[index[0]].value, exp[index[0]].token);
-    index[0] += 1;
-    return node;
+    return this.create_tree(expression, [0], 0, [[tokens.sign_plus, tokens.sign_minus],
+                                                 [tokens.sign_mul, tokens.sign_div]]);
   }
 
   getNode(value, type = null) {
@@ -133,37 +121,7 @@ class ExpressionNode {
     return currentNode;
   }
 
-  parse_mulls_t(expression, index) {
-    let parent = this.nodeController(expression, index);
-    while(index[0] < expression.length && (expression[index[0]].token == tokens.sign_mul || expression[index[0]].token == tokens.sign_div)) {
-      const currentSign = expression[index[0]].token;
-      index[0]++;
-      const nextNode = this.nodeController(expression, index);
-      const localParent = this.getNode(null);
-      localParent.left = parent;
-      localParent.right = nextNode;
-      localParent.sign = currentSign;
-      parent = localParent;
-    }
-    return parent;
-  }
-
-  parse_sums_t(expression, index) {
-    let parent = this.parse_mulls_t(expression, index);
-    while(index[0] < expression.length && (expression[index[0]].token == tokens.sign_plus || expression[index[0]].token == tokens.sign_minus)) {
-      const currentSign = expression[index[0]].token;
-      index[0]++;
-      const nextNode = this.parse_mulls_t(expression, index);
-      const localParent = this.getNode(null);
-      localParent.left = parent;
-      localParent.right = nextNode;
-      localParent.sign = currentSign;
-      parent = localParent;
-    }
-    return parent;
-  }
-
-  nodeControllerv2(exp, index, operations) {
+  nodeController(exp, index, operations) {
     if(exp[index[0]].token == tokens.sign_open_paranth) {
       index[0]++;
       const resultNode = this.create_tree(exp, index, 0, operations);
@@ -177,7 +135,7 @@ class ExpressionNode {
 
   get_function(expression, index, depth, operations) {
     if(depth == operations.length) {
-      return this.nodeControllerv2(expression, index, operations);
+      return this.nodeController(expression, index, operations);
     }
     return this.create_tree(expression, index, depth, operations);
   }
@@ -195,11 +153,6 @@ class ExpressionNode {
       parent = localParent;
     }
     return parent;
-  }
-
-  parse_recursive(expression) {
-    return this.create_tree(expression, [0], 0, [[tokens.sign_plus, tokens.sign_minus],
-                                                 [tokens.sign_mul, tokens.sign_div]]);
   }
 }
 
