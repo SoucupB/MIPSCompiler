@@ -55,6 +55,52 @@ const example = [
         ]
       }
     ]
+  },
+  {
+    token: 'condition',
+    payload: [
+      {
+        token: tokens.expression,
+        payload: [
+          {
+            token: tokens.constant_token,
+            value: 5
+          },
+          {
+            token: tokens.sign_plus,
+          },
+          {
+            token: tokens.constant_token,
+            value: 36
+          }
+        ]
+      },
+      {
+        token: 'assignation',
+        payload: [
+          {
+            token: tokens.variable,
+            payload: 'yolo'
+          },
+          {
+            token: tokens.expression,
+            payload: [
+              {
+                token: tokens.constant_token,
+                value: 5
+              },
+              {
+                token: tokens.sign_plus,
+              },
+              {
+                token: tokens.constant_token,
+                value: 36
+              }
+            ]
+          }
+        ]
+      }
+    ]
   }
 ]
 
