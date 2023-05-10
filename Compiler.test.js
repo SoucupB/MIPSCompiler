@@ -2,78 +2,7 @@ const ExpressionTree = require('./ExpressionTree');
 const { RegisterEmbed } = require('./Register');
 const { tokens } = require('./Token')
 const Compiler = require('./Compiler')
-
-function areRegistersEqual(src, dst) {
-  if(src.length !== dst.length) {
-    return false;
-  }
-  for(let i = 0; i < src.length; i++) {
-    if(src[i].type !== dst[i].type || JSON.stringify(src[i].params) !== JSON.stringify(dst[i].params)) {
-      return false;
-    }
-  }
-  return true;
-}
-
-function isNumber(number) {
-  if (!isNaN(Number(number))) {
-    return true
-  }
-  return false;
-}
-
-function createExpression(payload) {
-  let response = [];
-  for(let i = 0; i < payload.length; i++) {
-    switch(payload[i]) {
-      case '+': {
-        response.push({
-          token: tokens.sign_plus
-        })
-        break;
-      }
-      case '-': {
-        response.push({
-          token: tokens.sign_minus
-        })
-        break;
-      }
-      case '*': {
-        response.push({
-          token: tokens.sign_mul
-        })
-        break;
-      }
-      case '/': {
-        response.push({
-          token: tokens.sign_div
-        })
-        break;
-      }
-      case '(': {
-        response.push({
-          token: tokens.sign_open_paranth
-        })
-        break;
-      }
-      case ')': {
-        response.push({
-          token: tokens.sign_close_paranth
-        })
-        break;
-      }
-      default: {
-        const isNum = isNumber(payload[i]);
-        response.push({
-          token: isNum ? tokens.constant_token : tokens.variable,
-          value: isNum ? parseInt(payload[i]) : payload[i]
-        })
-        break;
-      }
-    }
-  }
-  return response;
-}
+const { Utils, createExpression, areRegistersEqual } = require('./Utils')
 
 function createAssignationPayload(payloadData) {
   return {
