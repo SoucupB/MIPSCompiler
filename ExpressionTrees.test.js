@@ -61,6 +61,36 @@ function createExpression(payload) {
         })
         break;
       }
+      case '&&': {
+        response.push({
+          token: tokens.sign_double_and
+        })
+        break;
+      }
+      case '||': {
+        response.push({
+          token: tokens.sign_double_or
+        })
+        break;
+      }
+      case '>': {
+        response.push({
+          token: tokens.sign_greater
+        })
+        break;
+      }
+      case '<': {
+        response.push({
+          token: tokens.sign_lower
+        })
+        break;
+      }
+      case '==': {
+        response.push({
+          token: tokens.sign_double_equal
+        })
+        break;
+      }
       default: {
         const isNum = isNumber(payload[i]);
         response.push({
@@ -156,4 +186,38 @@ test('generate 1 node tree', () => {
     new RegisterEmbed('mov', [3, 5]),
   ])).toBe(true)
   expect(expTree.getExpressionRegisterIndex(asm) == 2)
+});
+
+test('generate if expression', () => {
+  const expression = {
+    token: tokens.expression,
+    payload: createExpression(['5', '+', '12', '==', '17', '&&', '1', '+', '1', '==', '2'])
+  }
+  const expTree = new ExpressionTree();
+  expTree.create(expression.payload)
+  const asm = expTree.toRegister();
+  expect(areRegistersEqual(asm, [
+    new RegisterEmbed('mov', [3, 5]),
+    new RegisterEmbed('mov', [4, 12]),
+    new RegisterEmbed('add', [5, 3, 4]),
+    new RegisterEmbed('mov', [3, 17]),
+    new RegisterEmbed('beq', [3, 5, 2]),
+    new RegisterEmbed('mov', [4, 0]),
+    new RegisterEmbed('jre', [1]),
+    new RegisterEmbed('mov', [4, 1]),
+    new RegisterEmbed('mov', [3, 1]),
+    new RegisterEmbed('mov', [5, 1]),
+    new RegisterEmbed('add', [6, 3, 5]),
+    new RegisterEmbed('mov', [3, 2]),
+    new RegisterEmbed('beq', [3, 6, 2]),
+    new RegisterEmbed('mov', [5, 0]),
+    new RegisterEmbed('jre', [1]),
+    new RegisterEmbed('mov', [5, 1]),
+    new RegisterEmbed('mov', [0, 0]),
+    new RegisterEmbed('beq', [4, 0, 3]),
+    new RegisterEmbed('beq', [5, 0, 2]),
+    new RegisterEmbed('mov', [3, 1]),
+    new RegisterEmbed('jre', [1]),
+    new RegisterEmbed('mov', [3, 0]),
+  ])).toBe(true)
 });

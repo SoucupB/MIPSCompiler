@@ -58,12 +58,70 @@ class ExpressionTree {
     return new RegisterEmbed('mov', [this._getRegisterValue(node.id), `[${this.variables.getVariableMemory(node.value)}]`]);
   }
 
-  _addRegisterToAsm(regName, node, asm) {
+  _addArithmeticRegisterToAsm(regName, node, asm) {
     const leftReg = this._getRegisterValue(node.left.id);
     const rightReg = this._getRegisterValue(node.right.id);
     asm.push(new RegisterEmbed(regName, [this._getRegisterValue(node.id), leftReg, rightReg]));
     this._freeRegisters(node.left.id);
     this._freeRegisters(node.right.id);
+  }
+
+  _addLogicRegisterToAsm(node, asm) {
+    switch(node.sign) {
+      case tokens.sign_greater: {
+        const leftReg = this._getRegisterValue(node.left.id);
+        const rightReg = this._getRegisterValue(node.right.id);
+        asm.push(new RegisterEmbed('slt', [this._getRegisterValue(node.id), leftReg, rightReg]));
+        this._freeRegisters(node.left.id);
+        this._freeRegisters(node.right.id);
+        break;
+      }
+      case tokens.sign_lower: {
+        const leftReg = this._getRegisterValue(node.left.id);
+        const rightReg = this._getRegisterValue(node.right.id);
+        asm.push(new RegisterEmbed('slt', [this._getRegisterValue(node.id), rightReg, leftReg]));
+        this._freeRegisters(node.left.id);
+        this._freeRegisters(node.right.id);
+        break;
+      }
+      case tokens.sign_double_equal: {
+        const leftReg = this._getRegisterValue(node.left.id);
+        const rightReg = this._getRegisterValue(node.right.id);
+        asm.push(new RegisterEmbed('beq', [rightReg, leftReg, 2]));
+        asm.push(new RegisterEmbed('mov', [this._getRegisterValue(node.id), 0]));
+        asm.push(new RegisterEmbed('jre', [1]));
+        asm.push(new RegisterEmbed('mov', [this._getRegisterValue(node.id), 1]));
+        this._freeRegisters(node.left.id);
+        this._freeRegisters(node.right.id);
+        break;
+      }
+      case tokens.sign_double_or: {
+        const leftReg = this._getRegisterValue(node.left.id);
+        const rightReg = this._getRegisterValue(node.right.id);
+        asm.push(new RegisterEmbed('mov', [0, 0]));
+        asm.push(new RegisterEmbed('bgt', [leftReg, 0, 3]));
+        asm.push(new RegisterEmbed('bgt', [rightReg, 0, 2]));
+        asm.push(new RegisterEmbed('mov', [this._getRegisterValue(node.id), 0]));
+        asm.push(new RegisterEmbed('jre', [1]));
+        asm.push(new RegisterEmbed('mov', [this._getRegisterValue(node.id), 1]));
+        this._freeRegisters(node.left.id);
+        this._freeRegisters(node.right.id);
+        break;
+      }
+      case tokens.sign_double_and: {
+        const leftReg = this._getRegisterValue(node.left.id);
+        const rightReg = this._getRegisterValue(node.right.id);
+        asm.push(new RegisterEmbed('mov', [0, 0]));
+        asm.push(new RegisterEmbed('beq', [leftReg, 0, 3]));
+        asm.push(new RegisterEmbed('beq', [rightReg, 0, 2]));
+        asm.push(new RegisterEmbed('mov', [this._getRegisterValue(node.id), 1]));
+        asm.push(new RegisterEmbed('jre', [1]));
+        asm.push(new RegisterEmbed('mov', [this._getRegisterValue(node.id), 0]));
+        this._freeRegisters(node.left.id);
+        this._freeRegisters(node.right.id);
+        break;
+      }
+    }
   }
 
   toRegister_t(node, asm) {
@@ -75,19 +133,23 @@ class ExpressionTree {
     this.toRegister_t(node.right, asm);
     switch(node.sign) {
       case tokens.sign_plus: {
-        this._addRegisterToAsm('add', node, asm)
+        this._addArithmeticRegisterToAsm('add', node, asm)
         break;
       }
       case tokens.sign_minus: {
-        this._addRegisterToAsm('sub', node, asm)
+        this._addArithmeticRegisterToAsm('sub', node, asm)
         break;
       }
       case tokens.sign_mul: {
-        this._addRegisterToAsm('mul', node, asm)
+        this._addArithmeticRegisterToAsm('mul', node, asm)
         break;
       }
       case tokens.sign_div: {
-        this._addRegisterToAsm('div', node, asm)
+        this._addArithmeticRegisterToAsm('div', node, asm)
+        break;
+      }
+      default: {
+        this._addLogicRegisterToAsm(node, asm)
         break;
       }
     }
@@ -111,7 +173,7 @@ class ExpressionNode {
 
   parse(expression) {
     return this.create_tree(expression, [0], 0, [[tokens.sign_double_and, tokens.sign_double_or],
-                                                 [tokens.sign_greater, tokens.sign_lower],
+                                                 [tokens.sign_greater, tokens.sign_lower, tokens.sign_double_equal],
                                                  [tokens.sign_plus, tokens.sign_minus],
                                                  [tokens.sign_mul, tokens.sign_div]]);
   }
