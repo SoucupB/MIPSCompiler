@@ -1,17 +1,17 @@
 const ExpressionTree = require('./ExpressionTree');
 const { RegisterEmbed } = require('./Register');
 const { tokens } = require('./Token')
-const { Utils, createExpression, areRegistersEqual } = require('./Utils')
+const { Utils } = require('./Utils')
 
 test('check if its generates correct expression tree', () => {
   const expression = {
     token: tokens.expression,
-    payload: createExpression(['5', '*', '14', '+', '36', '*', '23'])
+    payload: Utils.createExpression(['5', '*', '14', '+', '36', '*', '23'])
   }
   const expTree = new ExpressionTree();
   expTree.create(expression.payload)
   const asm = expTree.toRegister();
-  expect(areRegistersEqual(asm, [
+  expect(Utils.areRegistersEqual(asm, [
     new RegisterEmbed('mov', [3, 5]),
     new RegisterEmbed('mov', [4, 14]),
     new RegisterEmbed('mul', [5, 3, 4]),
@@ -26,12 +26,12 @@ test('check if its generates correct expression tree', () => {
 test('check if it generates simple trees', () => {
   const expression = {
     token: tokens.expression,
-    payload: createExpression(['(', '5', '*', '14', ')'])
+    payload: Utils.createExpression(['(', '5', '*', '14', ')'])
   }
   const expTree = new ExpressionTree();
   expTree.create(expression.payload)
   const asm = expTree.toRegister();
-  expect(areRegistersEqual(asm, [
+  expect(Utils.areRegistersEqual(asm, [
     new RegisterEmbed('mov', [3, 5]),
     new RegisterEmbed('mov', [4, 14]),
     new RegisterEmbed('mul', [5, 3, 4])
@@ -42,12 +42,12 @@ test('check if it generates simple trees', () => {
 test('check if it generates simple trees v1', () => {
   const expression = {
     token: tokens.expression,
-    payload: createExpression(['(', '5', '*', '14', ')'])
+    payload: Utils.createExpression(['(', '5', '*', '14', ')'])
   }
   const expTree = new ExpressionTree();
   expTree.create(expression.payload)
   const asm = expTree.toRegister()
-  expect(areRegistersEqual(asm, [
+  expect(Utils.areRegistersEqual(asm, [
     new RegisterEmbed('mov', [3, 5]),
     new RegisterEmbed('mov', [4, 14]),
     new RegisterEmbed('mul', [5, 3, 4])
@@ -58,12 +58,12 @@ test('check if it generates simple trees v1', () => {
 test('check if it generates simple trees v2', () => {
   const expression = {
     token: tokens.expression,
-    payload: createExpression(['(', '5', '+', '14', ')', '*', '7'])
+    payload: Utils.createExpression(['(', '5', '+', '14', ')', '*', '7'])
   }
   const expTree = new ExpressionTree();
   expTree.create(expression.payload)
   const asm = expTree.toRegister()
-  expect(areRegistersEqual(asm, [
+  expect(Utils.areRegistersEqual(asm, [
     new RegisterEmbed('mov', [3, 5]),
     new RegisterEmbed('mov', [4, 14]),
     new RegisterEmbed('add', [5, 3, 4]),
@@ -76,12 +76,12 @@ test('check if it generates simple trees v2', () => {
 test('generate 1 node tree', () => {
   const expression = {
     token: tokens.expression,
-    payload: createExpression(['5'])
+    payload: Utils.createExpression(['5'])
   }
   const expTree = new ExpressionTree();
   expTree.create(expression.payload)
   const asm = expTree.toRegister();
-  expect(areRegistersEqual(asm, [
+  expect(Utils.areRegistersEqual(asm, [
     new RegisterEmbed('mov', [3, 5]),
   ])).toBe(true)
   expect(expTree.getExpressionRegisterIndex(asm) == 2)
@@ -90,12 +90,12 @@ test('generate 1 node tree', () => {
 test('generate if expression', () => {
   const expression = {
     token: tokens.expression,
-    payload: createExpression(['5', '+', '12', '==', '17', '&&', '1', '+', '1', '==', '2'])
+    payload: Utils.createExpression(['5', '+', '12', '==', '17', '&&', '1', '+', '1', '==', '2'])
   }
   const expTree = new ExpressionTree();
   expTree.create(expression.payload)
   const asm = expTree.toRegister();
-  expect(areRegistersEqual(asm, [
+  expect(Utils.areRegistersEqual(asm, [
     new RegisterEmbed('mov', [3, 5]),
     new RegisterEmbed('mov', [4, 12]),
     new RegisterEmbed('add', [5, 3, 4]),

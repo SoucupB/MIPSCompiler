@@ -2,7 +2,7 @@ const ExpressionTree = require('./ExpressionTree');
 const { RegisterEmbed } = require('./Register');
 const { tokens } = require('./Token')
 const Compiler = require('./Compiler')
-const { Utils, createExpression, areRegistersEqual } = require('./Utils')
+const { Utils } = require('./Utils')
 
 function createAssignationPayload(payloadData) {
   return {
@@ -14,7 +14,7 @@ function createAssignationPayload(payloadData) {
       },
       {
         token: tokens.expression,
-        payload: createExpression(payloadData.slice(-(payloadData.length - 1)))
+        payload: Utils.createExpression(payloadData.slice(-(payloadData.length - 1)))
       }
     ]
   }
@@ -38,7 +38,7 @@ function createInitializationPayload(payloadData) {
   if(payloadData.length > 2) {
     payload.payload.push({
       token: tokens.expression,
-      payload: createExpression(expression)
+      payload: Utils.createExpression(expression)
     })
   }
 
@@ -52,7 +52,7 @@ test('correct compilation v1', () => {
   ]
   const code = new Compiler(toCompile);
   code.compile()
-  expect(areRegistersEqual(code.asm, [
+  expect(Utils.areRegistersEqual(code.asm, [
     new RegisterEmbed('mov', [3, 1]),
     new RegisterEmbed('mov', [4, 2]),
     new RegisterEmbed('add', [5, 3, 4]),
@@ -70,7 +70,7 @@ test('correct compilation v2', () => {
   ]
   const code = new Compiler(toCompile);
   code.compile()
-  expect(areRegistersEqual(code.asm, [
+  expect(Utils.areRegistersEqual(code.asm, [
     new RegisterEmbed('mov', [3, 1]),
     new RegisterEmbed('mov', [4, 2]),
     new RegisterEmbed('mov', [5, 5]),
@@ -89,7 +89,7 @@ test('correct compilation v3', () => {
   ]
   const code = new Compiler(toCompile);
   code.compile()
-  expect(areRegistersEqual(code.asm, [
+  expect(Utils.areRegistersEqual(code.asm, [
     new RegisterEmbed('mov', [3, 1]),
     new RegisterEmbed('mov', ['[0]', 3]),
     new RegisterEmbed('mov', [3, 3]),
@@ -105,7 +105,7 @@ test('correct compilation v4', () => {
   ]
   const code = new Compiler(toCompile);
   code.compile()
-  expect(areRegistersEqual(code.asm, [
+  expect(Utils.areRegistersEqual(code.asm, [
     new RegisterEmbed('mov', [3, 1]),
     new RegisterEmbed('mov', ['[0]', 3]),
     new RegisterEmbed('mov', [3, 5]),
@@ -120,7 +120,7 @@ test('correct expression with variables', () => {
   ]
   const code = new Compiler(toCompile);
   code.compile()
-  expect(areRegistersEqual(code.asm, [
+  expect(Utils.areRegistersEqual(code.asm, [
     new RegisterEmbed('mov', [3, 1]),
     new RegisterEmbed('mov', ['[0]', 3]),
     new RegisterEmbed('mov', [3, 1]),
@@ -139,7 +139,7 @@ test('correct expression with variables v2', () => {
   ]
   const code = new Compiler(toCompile);
   code.compile()
-  expect(areRegistersEqual(code.asm, [
+  expect(Utils.areRegistersEqual(code.asm, [
     new RegisterEmbed('mov', [3, 1]),
     new RegisterEmbed('mov', ['[0]', 3]),
     new RegisterEmbed('mov', [3, 3]),
