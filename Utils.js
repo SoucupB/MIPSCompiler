@@ -145,6 +145,47 @@ class Utils {
     }
     return true;
   }
+
+  static createAssignationPayload(payloadData) {
+    return {
+      token: 'assignation',
+      payload: [
+        {
+          token: tokens.variable,
+          payload: payloadData[0]
+        },
+        {
+          token: tokens.expression,
+          payload: Utils.createExpression(payloadData.slice(-(payloadData.length - 1)))
+        }
+      ]
+    }
+  }
+  
+  static createInitializationPayload(payloadData) {
+    const payload = {
+      token: 'initialization',
+      payload: [
+        {
+          token: tokens.data_type,
+          payload: payloadData[0]
+        },
+        {
+          token: tokens.variable,
+          payload: payloadData[1]
+        },
+      ]
+    };
+    const expression = payloadData.slice(-(payloadData.length - 2));
+    if(payloadData.length > 2) {
+      payload.payload.push({
+        token: tokens.expression,
+        payload: Utils.createExpression(expression)
+      })
+    }
+  
+    return payload
+  }
 }
 
 module.exports = { Utils };

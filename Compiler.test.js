@@ -4,51 +4,10 @@ const { tokens } = require('./Token')
 const Compiler = require('./Compiler')
 const { Utils } = require('./Utils')
 
-function createAssignationPayload(payloadData) {
-  return {
-    token: 'assignation',
-    payload: [
-      {
-        token: tokens.variable,
-        payload: payloadData[0]
-      },
-      {
-        token: tokens.expression,
-        payload: Utils.createExpression(payloadData.slice(-(payloadData.length - 1)))
-      }
-    ]
-  }
-}
-
-function createInitializationPayload(payloadData) {
-  const payload = {
-    token: 'initialization',
-    payload: [
-      {
-        token: tokens.data_type,
-        payload: payloadData[0]
-      },
-      {
-        token: tokens.variable,
-        payload: payloadData[1]
-      },
-    ]
-  };
-  const expression = payloadData.slice(-(payloadData.length - 2));
-  if(payloadData.length > 2) {
-    payload.payload.push({
-      token: tokens.expression,
-      payload: Utils.createExpression(expression)
-    })
-  }
-
-  return payload
-}
-
 test('correct compilation v1', () => {
   const toCompile = [
-    createInitializationPayload(['int7_t', 'yolo', '1', '+', '2']),
-    createAssignationPayload(['yolo', '5', '+', '36'])
+    Utils.createInitializationPayload(['int7_t', 'yolo', '1', '+', '2']),
+    Utils.createAssignationPayload(['yolo', '5', '+', '36'])
   ]
   const code = new Compiler(toCompile);
   code.compile()
@@ -66,7 +25,7 @@ test('correct compilation v1', () => {
 
 test('correct compilation v2', () => {
   const toCompile = [
-    createInitializationPayload(['int7_t', 'a', '1', '+', '2', '*', '5', '*', '6']),
+    Utils.createInitializationPayload(['int7_t', 'a', '1', '+', '2', '*', '5', '*', '6']),
   ]
   const code = new Compiler(toCompile);
   code.compile()
@@ -84,8 +43,8 @@ test('correct compilation v2', () => {
 
 test('correct compilation v3', () => {
   const toCompile = [
-    createInitializationPayload(['int7_t', 'a', '1']),
-    createInitializationPayload(['int7_t', 'b', '3']),
+    Utils.createInitializationPayload(['int7_t', 'a', '1']),
+    Utils.createInitializationPayload(['int7_t', 'b', '3']),
   ]
   const code = new Compiler(toCompile);
   code.compile()
@@ -99,9 +58,9 @@ test('correct compilation v3', () => {
 
 test('correct compilation v4', () => {
   const toCompile = [
-    createInitializationPayload(['int7_t', 'a', '1']),
-    createInitializationPayload(['int7_t', 'b']),
-    createAssignationPayload(['b', '5'])
+    Utils.createInitializationPayload(['int7_t', 'a', '1']),
+    Utils.createInitializationPayload(['int7_t', 'b']),
+    Utils.createAssignationPayload(['b', '5'])
   ]
   const code = new Compiler(toCompile);
   code.compile()
@@ -115,8 +74,8 @@ test('correct compilation v4', () => {
 
 test('correct expression with variables', () => {
   const toCompile = [
-    createInitializationPayload(['int7_t', 'a', '1']),
-    createInitializationPayload(['int7_t', 'b', '1', '+', 'a']),
+    Utils.createInitializationPayload(['int7_t', 'a', '1']),
+    Utils.createInitializationPayload(['int7_t', 'b', '1', '+', 'a']),
   ]
   const code = new Compiler(toCompile);
   code.compile()
@@ -132,10 +91,10 @@ test('correct expression with variables', () => {
 
 test('correct expression with variables v2', () => {
   const toCompile = [
-    createInitializationPayload(['int7_t', 'a', '1']),
-    createInitializationPayload(['int7_t', 'b', '3', '+', 'a']),
-    createInitializationPayload(['int7_t', 'c', '4', '+', 'a', '*', 'b']),
-    createInitializationPayload(['int7_t', 'd', '5', '+', 'a', '*', '(', 'b', '+', 'c', ')']),
+    Utils.createInitializationPayload(['int7_t', 'a', '1']),
+    Utils.createInitializationPayload(['int7_t', 'b', '3', '+', 'a']),
+    Utils.createInitializationPayload(['int7_t', 'c', '4', '+', 'a', '*', 'b']),
+    Utils.createInitializationPayload(['int7_t', 'd', '5', '+', 'a', '*', '(', 'b', '+', 'c', ')']),
   ]
   const code = new Compiler(toCompile);
   code.compile()
