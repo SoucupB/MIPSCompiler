@@ -133,7 +133,7 @@ test('conditional expression', () => {
       Utils.createInitializationPayload(['int7_t', 'b', '1']),
       Utils.createAssignationPayload(['c', 'b', '+', '2'])
     ]),
-    Utils.createInitializationPayload(['int7_t', 'd', '1', '+', 'c'])
+    Utils.createInitializationPayload(['int7_t', 'd', '5', '+', 'c'])
   ]
   // console.log(JSON.stringify(toCompile, null, "  "))
   const code = new Compiler(toCompile);

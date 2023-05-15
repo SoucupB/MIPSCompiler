@@ -109,20 +109,28 @@ class Compiler {
     return true;
   }
 
+  _addRegisterEmbed(register) {
+    this.asm.push(register)
+  }
+
   _registerConditional(code) {
     if(this._isConditionalCorrect(code)) {
-      this._registerExpressionWithoutVariable(code.payload[0].payload)
-      // for(let i = 0; i < code.payload[1].length; i++) {
-      //   if(!this._registerInitialization(code[i])) {
-      //     return false;
-      //   }
-      //   if(!this._registerAssignation(code[i])) {
-      //     return false;
-      //   }
-      //   if(!this._registerConditional(code[i])) {
-      //     return false;
-      //   }
-      // }
+      const registerIndex = this._registerExpressionWithoutVariable(code.payload[0].payload)
+      let equalReg = new RegisterEmbed('beq', [])
+      this._addRegisterEmbed(equalReg)
+      const currentPointer = this.asm.length;
+      for(let i = 1; i < code.payload.length; i++) {
+        if(!this._registerInitialization(code.payload[i])) {
+          return false;
+        }
+        if(!this._registerAssignation(code.payload[i])) {
+          return false;
+        }
+        if(!this._registerConditional(code.payload[i])) {
+          return false;
+        }
+      }
+      equalReg.params = [registerIndex, 1, this.asm.length - currentPointer - 1]
     }
     return true;
   }

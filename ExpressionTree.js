@@ -157,11 +157,9 @@ class ExpressionTree {
   }
 
   create(expression) {
-    console.log(expression)
     this.registerIDs = {};
     const node = new ExpressionNode();
     this.root = node.parse(expression);
-    console.log(this.root)
     return this.root;
   }
 }
