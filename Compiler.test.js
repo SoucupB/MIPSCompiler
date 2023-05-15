@@ -257,3 +257,39 @@ test('conditional expression v3', () => {
     new RegisterEmbed('mov', ["[2]", 6]),
   ])).toBe(true)
 });
+
+test('loop expression v1', () => {
+  const toCompile = [
+    Utils.createInitializationPayload(['int7_t', 'c']),
+    Utils.createInitializationPayload(['int7_t', 'b', '1']), // second param should not free registers.
+    Utils.createForLoopPayload([Utils.createAssignationPayload(['c', '0']), Utils.createExpression(['c', '<', '5']), Utils.createAssignationPayload(['c', 'c', '+', '1'])], [
+      Utils.createAssignationPayload(['b', 'b', '+', '1']),
+    ]),
+    Utils.createInitializationPayload(['int7_t', 'a', '5', '+', 'b'])
+  ]
+  const code = new Compiler(toCompile);
+  code.compile()
+  expect(Utils.areRegistersEqual(code.asm, [
+    new RegisterEmbed('mov', [3,1]),
+    new RegisterEmbed('mov', ["[1]",3]),
+    new RegisterEmbed('mov', [3,0]),
+    new RegisterEmbed('mov', ["[0]",3]),
+    new RegisterEmbed('mov', [3,"[0]"]),
+    new RegisterEmbed('mov', [4,5]),
+    new RegisterEmbed('slt', [5,4,3]),
+    new RegisterEmbed('benq', [5,1,9]),
+    new RegisterEmbed('mov', [3,"[1]"]),
+    new RegisterEmbed('mov', [4,1]),
+    new RegisterEmbed('add', [6,3,4]),
+    new RegisterEmbed('mov', ["[1]",6]),
+    new RegisterEmbed('mov', [3,"[0]"]),
+    new RegisterEmbed('mov', [4,1]),
+    new RegisterEmbed('add', [6,3,4]),
+    new RegisterEmbed('mov', ["[0]",6]),
+    new RegisterEmbed('j', [4]),
+    new RegisterEmbed('mov', [3,5]),
+    new RegisterEmbed('mov', [4,"[1]"]),
+    new RegisterEmbed('add', [6,3,4]),
+    new RegisterEmbed('mov', ["[2]",6]),
+  ])).toBe(true)
+});

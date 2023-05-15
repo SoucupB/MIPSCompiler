@@ -109,6 +109,46 @@ class Compiler {
     return true;
   }
 
+  _isLoopCorrect(code) {
+    if(code.token !== 'for_loop') {
+      return false;
+    }
+    if(code.payload.length < 3) {
+      this.errors.push("Error, for loop should have 3 assignations")
+      return false;
+    }
+    return true;
+  }
+
+  _registerForLoop(code) {
+    if(this._isLoopCorrect(code)) {
+      this._registerAssignation(code.payload[0]);
+      const beforeForAddress = this.asm.length;
+      const registerIndex = this._registerExpressionWithoutVariable(code.payload[1].payload)
+      const ben = new RegisterEmbed('benq', []);
+      this._addRegisterEmbed(ben)
+      const currentPointer = this.asm.length;
+      for(let i = 3; i < code.payload.length; i++) {
+        if(!this._registerInitialization(code.payload[i])) {
+          return false;
+        }
+        if(!this._registerAssignation(code.payload[i])) {
+          return false;
+        }
+        if(!this._registerConditional(code.payload[i])) {
+          return false;
+        }
+        if(!this._registerForLoop(code.payload[i])) {
+          return false;
+        }
+      }
+      this._registerAssignation(code.payload[2]);
+      this._addRegisterEmbed(new RegisterEmbed('j', [beforeForAddress]))
+      ben.params = [registerIndex, 1, this.asm.length - currentPointer]
+    }
+    return true;
+  }
+
   _addRegisterEmbed(register) {
     this.asm.push(register)
   }
@@ -129,6 +169,9 @@ class Compiler {
         if(!this._registerConditional(code.payload[i])) {
           return false;
         }
+        if(!this._registerForLoop(code.payload[i])) {
+          return false;
+        }
       }
       equalReg.params = [registerIndex, 1, this.asm.length - currentPointer]
     }
@@ -145,6 +188,9 @@ class Compiler {
         break;
       }
       if(!this._registerConditional(code[i])) {
+        break;
+      }
+      if(!this._registerForLoop(code[i])) {
         break;
       }
     }

@@ -178,6 +178,24 @@ class Utils {
     }
     return payload
   }
+
+  static createForLoopPayload(loopInstructions, instructions) {
+    const payload = {
+      token: 'for_loop',
+      payload: [
+        loopInstructions[0],
+        {
+          token: tokens.expression,
+          payload: loopInstructions[1]
+        },
+        loopInstructions[2]
+      ]
+    };
+    for(let i = 0; i < instructions.length; i++) {
+      payload.payload.push(instructions[i])
+    }
+    return payload
+  }
   
   static createInitializationPayload(payloadData) {
     const payload = {
