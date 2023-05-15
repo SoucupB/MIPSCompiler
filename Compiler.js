@@ -55,6 +55,15 @@ class Compiler {
     return true;
   }
 
+  _registerExpressionWithoutVariable(expression) {
+    this.expressionTree.create(expression)
+    const asmIntructions = this.expressionTree.toRegister();
+    for(let i = 0, c = asmIntructions.length; i < c; i++) {
+      this.asm.push(asmIntructions[i]);
+    }
+    return this.expressionTree.getExpressionRegisterIndex(asmIntructions);
+  }
+
   _registerInitialization(code) {
     if(this._isInitializationCorrect(code)) {
       if(!this._registerVariable(code.payload[1].payload)) {
@@ -89,6 +98,35 @@ class Compiler {
     return true;
   }
 
+  _isConditionalCorrect(code) {
+    if(code.token !== 'condition') {
+      return false;
+    }
+    if(code.payload.length < 1) {
+      this.errors.push("Error, conditional cannot be empty")
+      return false;
+    }
+    return true;
+  }
+
+  _registerConditional(code) {
+    if(this._isConditionalCorrect(code)) {
+      this._registerExpressionWithoutVariable(code.payload[0].payload)
+      // for(let i = 0; i < code.payload[1].length; i++) {
+      //   if(!this._registerInitialization(code[i])) {
+      //     return false;
+      //   }
+      //   if(!this._registerAssignation(code[i])) {
+      //     return false;
+      //   }
+      //   if(!this._registerConditional(code[i])) {
+      //     return false;
+      //   }
+      // }
+    }
+    return true;
+  }
+
   compile() {
     const code = this.code;
     for(let i = 0, c = code.length; i < c; i++) {
@@ -96,6 +134,9 @@ class Compiler {
         break;
       }
       if(!this._registerAssignation(code[i])) {
+        break;
+      }
+      if(!this._registerConditional(code[i])) {
         break;
       }
     }

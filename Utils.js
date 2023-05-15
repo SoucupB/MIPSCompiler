@@ -161,6 +161,23 @@ class Utils {
       ]
     }
   }
+
+  static createConditionalPayload(condictionExpression, instructions) {
+    const payload = {
+      token: 'condition',
+      payload: []
+    };
+    if(condictionExpression) {
+      payload.payload.push({
+        token: tokens.expression,
+        payload: condictionExpression
+      })
+    }
+    for(let i = 0; i < instructions.length; i++) {
+      payload.payload.push(instructions[i])
+    }
+    return payload
+  }
   
   static createInitializationPayload(payloadData) {
     const payload = {
