@@ -116,7 +116,7 @@ class Compiler {
   _registerConditional(code) {
     if(this._isConditionalCorrect(code)) {
       const registerIndex = this._registerExpressionWithoutVariable(code.payload[0].payload)
-      let equalReg = new RegisterEmbed('beq', [])
+      let equalReg = new RegisterEmbed('benq', [])
       this._addRegisterEmbed(equalReg)
       const currentPointer = this.asm.length;
       for(let i = 1; i < code.payload.length; i++) {
