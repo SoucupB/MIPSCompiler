@@ -143,7 +143,6 @@ test('conditional expression', () => {
     ]),
     Utils.createInitializationPayload(['int7_t', 'd', '5', '+', 'c'])
   ]
-  // console.log(JSON.stringify(toCompile, null, "  "))
   const code = new Compiler(toCompile);
   code.compile()
   expect(Utils.areRegistersEqual(code.asm, [
@@ -170,5 +169,63 @@ test('conditional expression', () => {
     new RegisterEmbed('mov', [5,"[1]"]),
     new RegisterEmbed('add', [6,3,5]),
     new RegisterEmbed('mov', ["[3]",6]),
+  ])).toBe(true)
+});
+
+test('conditional expression v2', () => {
+  const toCompile = [
+    Utils.createInitializationPayload(['int7_t', 'a', '1']),
+    Utils.createInitializationPayload(['int7_t', 'c', '1']),
+    Utils.createConditionalPayload(Utils.createExpression(['1', '+', '3', '==', '2']), [
+      Utils.createInitializationPayload(['int7_t', 'b', '1']),
+      Utils.createAssignationPayload(['c', 'b', '+', '2']),
+      Utils.createConditionalPayload(Utils.createExpression(['5', '+', '3', '==', '2']), [
+        Utils.createAssignationPayload(['b', '15']),
+        Utils.createAssignationPayload(['a', 'b', '+', '2'])
+      ]),
+    ]),
+    Utils.createInitializationPayload(['int7_t', 'd', '5', '+', 'c'])
+  ]
+  const code = new Compiler(toCompile);
+  code.compile()
+  expect(Utils.areRegistersEqual(code.asm, [
+    new RegisterEmbed('mov', [3,1]),
+      new RegisterEmbed('mov', ["[0]",3]),
+      new RegisterEmbed('mov', [3,1]),
+      new RegisterEmbed('mov', ["[1]",3]),
+      new RegisterEmbed('mov', [3,1]),
+      new RegisterEmbed('mov', [4,3]),
+      new RegisterEmbed('add', [5,3,4]),
+      new RegisterEmbed('mov', [3,2]),
+      new RegisterEmbed('beq', [3,5,2]),
+      new RegisterEmbed('mov', [4,0]),
+      new RegisterEmbed('jre', [1]),
+      new RegisterEmbed('mov', [4,1]),
+      new RegisterEmbed('benq', [4,1,20]),
+      new RegisterEmbed('mov', [3,1]),
+      new RegisterEmbed('mov', ["[2]",3]),
+      new RegisterEmbed('mov', [3,"[2]"]),
+      new RegisterEmbed('mov', [5,2]),
+      new RegisterEmbed('add', [6,3,5]),
+      new RegisterEmbed('mov', ["[1]",6]),
+      new RegisterEmbed('mov', [3,5]),
+      new RegisterEmbed('mov', [5,3]),
+      new RegisterEmbed('add', [6,3,5]),
+      new RegisterEmbed('mov', [3,2]),
+      new RegisterEmbed('beq', [3,6,2]),
+      new RegisterEmbed('mov', [5,0]),
+      new RegisterEmbed('jre', [1]),
+      new RegisterEmbed('mov', [5,1]),
+      new RegisterEmbed('benq', [5,1,5]),
+      new RegisterEmbed('mov', [3,15]),
+      new RegisterEmbed('mov', ["[2]",3]),
+      new RegisterEmbed('mov', [3,"[2]"]),
+      new RegisterEmbed('mov', [6,2]),
+      new RegisterEmbed('add', [7,3,6]),
+      new RegisterEmbed('mov', ["[0]",7]),
+      new RegisterEmbed('mov', [3,5]),
+      new RegisterEmbed('mov', [6,"[1]"]),
+      new RegisterEmbed('add', [7,3,6]),
+      new RegisterEmbed('mov', ["[3]",7]),
   ])).toBe(true)
 });
