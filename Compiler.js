@@ -130,7 +130,7 @@ class Compiler {
           return false;
         }
       }
-      equalReg.params = [registerIndex, 1, this.asm.length - currentPointer - 1]
+      equalReg.params = [registerIndex, 1, this.asm.length - currentPointer]
     }
     return true;
   }
