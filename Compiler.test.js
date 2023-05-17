@@ -21,7 +21,7 @@ test('correct compilation v1', () => {
   code.compile()
   const resp = new RegistersEmbed(code.asm);
   const regMem = resp.executeMips(resp.toMips());
-  expect(regMem.memory[0]).toBe(41); // a
+  expect(regMem.memory[0]).toBe(41); // yolo
 });
 
 test('correct compilation v2', () => {
@@ -187,4 +187,27 @@ test('loop expression v2', () => {
   expect(regMem.memory[0]).toBe(6); // c
   expect(regMem.memory[1]).toBe(3); // b
   expect(regMem.memory[2]).toBe(8); // a
+});
+
+test('loop fibbonachi', () => {
+  const toCompile = [
+    Utils.createInitializationPayload(['int7_t', 'i']),
+    Utils.createInitializationPayload(['int7_t', 'a', '1']),
+    Utils.createInitializationPayload(['int7_t', 'b', '1']),
+    Utils.createInitializationPayload(['int7_t', 'c']),
+    Utils.createForLoopPayload([Utils.createAssignationPayload(['i', '0']), Utils.createExpression(['i', '<', '8']), Utils.createAssignationPayload(['i', 'i', '+', '1'])], [
+      Utils.createAssignationPayload(['c', 'a', '+', 'b']),
+      Utils.createAssignationPayload(['a', 'b']),
+      Utils.createAssignationPayload(['b', 'c']),
+    ]),
+  ]
+  const code = new Compiler(toCompile);
+  code.compile()
+  const resp = new RegistersEmbed(code.asm);
+  const regMem = resp.executeMips(resp.toMips());
+  console.log(resp.toMipsString())
+  expect(regMem.memory[0]).toBe(8); // i
+  expect(regMem.memory[1]).toBe(34); // a
+  expect(regMem.memory[2]).toBe(55); // b
+  expect(regMem.memory[3]).toBe(55); // c
 });
