@@ -128,7 +128,6 @@ class RegistersEmbed {
           break;
         }
       }
-      console.log(i);
       i++;
     }
     return {
