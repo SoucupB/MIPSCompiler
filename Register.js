@@ -84,6 +84,14 @@ class RegistersEmbed {
           registers[this._mips_ExtractReg(param[0])] = registers[this._mips_ExtractReg(param[1])] + registers[this._mips_ExtractReg(param[2])]
           break;
         }
+        case 'or': {
+          registers[this._mips_ExtractReg(param[0])] = (registers[this._mips_ExtractReg(param[1])] != 0 || registers[this._mips_ExtractReg(param[2])] != 0) ? 1 : 0
+          break;
+        }
+        case 'and': {
+          registers[this._mips_ExtractReg(param[0])] = (registers[this._mips_ExtractReg(param[1])] != 0 && registers[this._mips_ExtractReg(param[2])] != 0) ? 1 : 0
+          break;
+        }
         case 'mul': {
           registers[this._mips_ExtractReg(param[0])] = registers[this._mips_ExtractReg(param[1])] * registers[this._mips_ExtractReg(param[2])]
           break;
@@ -161,6 +169,14 @@ class RegistersEmbed {
         }
         case 'add': {
           response.push(new RegisterEmbed('add', [`$${params[0]}`, `$${params[1]}`, `$${params[2]}`]))
+          break;
+        }
+        case 'or': {
+          response.push(new RegisterEmbed('or', [`$${params[0]}`, `$${params[1]}`, `$${params[2]}`]))
+          break;
+        }
+        case 'and': {
+          response.push(new RegisterEmbed('and', [`$${params[0]}`, `$${params[1]}`, `$${params[2]}`]))
           break;
         }
         case 'j': {

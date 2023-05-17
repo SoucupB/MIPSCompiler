@@ -20,8 +20,13 @@ class ExpressionTree {
     return newReg;
   }
 
+  _getEmptyRegister() {
+    return this.registers.getEmptyRegister();
+  }
+
   _freeRegisters(node_id) {
     if(!(node_id in this.registerIDs)) {
+      this.registers.freeRegister(node_id)
       return ;
     }
     const currentReg = this.registerIDs[node_id];
@@ -36,6 +41,10 @@ class ExpressionTree {
         return ;
       }
     }
+  }
+
+  freeNonIDRegister(register) {
+    this._freeRegisters(register);
   }
 
   toRegister() {
@@ -98,12 +107,17 @@ class ExpressionTree {
       case tokens.sign_double_or: {
         const leftReg = this._getRegisterValue(node.left.id);
         const rightReg = this._getRegisterValue(node.right.id);
-        asm.push(new RegisterEmbed('mov', [0, 0]));
-        asm.push(new RegisterEmbed('bgt', [leftReg, 0, 3]));
-        asm.push(new RegisterEmbed('bgt', [rightReg, 0, 2]));
-        asm.push(new RegisterEmbed('mov', [this._getRegisterValue(node.id), 0]));
-        asm.push(new RegisterEmbed('jre', [1]));
-        asm.push(new RegisterEmbed('mov', [this._getRegisterValue(node.id), 1]));
+
+        const zeroReg = this._getEmptyRegister();
+        const newRegLeft = this._getEmptyRegister();
+        const newRegRight = this._getEmptyRegister();
+        asm.push(new RegisterEmbed('mov', [zeroReg, 0]));
+        asm.push(new RegisterEmbed('slt', [newRegLeft, zeroReg, leftReg]));
+        asm.push(new RegisterEmbed('slt', [newRegRight, zeroReg, rightReg]));
+        asm.push(new RegisterEmbed('or', [this._getRegisterValue(node.id), newRegLeft, newRegRight]));
+        this.freeNonIDRegister(zeroReg);
+        this.freeNonIDRegister(newRegLeft);
+        this.freeNonIDRegister(newRegRight);
         this._freeRegisters(node.left.id);
         this._freeRegisters(node.right.id);
         break;
@@ -111,12 +125,16 @@ class ExpressionTree {
       case tokens.sign_double_and: {
         const leftReg = this._getRegisterValue(node.left.id);
         const rightReg = this._getRegisterValue(node.right.id);
-        asm.push(new RegisterEmbed('mov', [0, 0]));
-        asm.push(new RegisterEmbed('beq', [leftReg, 0, 3]));
-        asm.push(new RegisterEmbed('beq', [rightReg, 0, 2]));
-        asm.push(new RegisterEmbed('mov', [this._getRegisterValue(node.id), 1]));
-        asm.push(new RegisterEmbed('jre', [1]));
-        asm.push(new RegisterEmbed('mov', [this._getRegisterValue(node.id), 0]));
+        const zeroReg = this._getEmptyRegister();
+        const newRegLeft = this._getEmptyRegister();
+        const newRegRight = this._getEmptyRegister();
+        asm.push(new RegisterEmbed('mov', [zeroReg, 0]));
+        asm.push(new RegisterEmbed('slt', [newRegLeft, zeroReg, leftReg]));
+        asm.push(new RegisterEmbed('slt', [newRegRight, zeroReg, rightReg]));
+        asm.push(new RegisterEmbed('and', [this._getRegisterValue(node.id), newRegLeft, newRegRight]));
+        this.freeNonIDRegister(zeroReg);
+        this.freeNonIDRegister(newRegLeft);
+        this.freeNonIDRegister(newRegRight);
         this._freeRegisters(node.left.id);
         this._freeRegisters(node.right.id);
         break;

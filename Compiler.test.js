@@ -205,9 +205,26 @@ test('loop fibbonachi', () => {
   code.compile()
   const resp = new RegistersEmbed(code.asm);
   const regMem = resp.executeMips(resp.toMips());
-  console.log(resp.toMipsString())
   expect(regMem.memory[0]).toBe(8); // i
   expect(regMem.memory[1]).toBe(34); // a
   expect(regMem.memory[2]).toBe(55); // b
   expect(regMem.memory[3]).toBe(55); // c
+});
+
+test('loop with if', () => {
+  const toCompile = [
+    Utils.createInitializationPayload(['int7_t', 'i']),
+    Utils.createInitializationPayload(['int7_t', 'a', '5']),
+    Utils.createForLoopPayload([Utils.createAssignationPayload(['i', '0']), Utils.createExpression(['i', '<', '5']), Utils.createAssignationPayload(['i', 'i', '+', '1'])], [
+      Utils.createConditionalPayload(Utils.createExpression(['i', '==', '3', '||', 'i', '==', '4']), [
+        Utils.createAssignationPayload(['a', 'a', '+', 'i']),
+      ])
+    ]),
+  ]
+  const code = new Compiler(toCompile);
+  code.compile()
+  const resp = new RegistersEmbed(code.asm);
+  const regMem = resp.executeMips(resp.toMips());
+  expect(regMem.memory[0]).toBe(5); // i
+  expect(regMem.memory[1]).toBe(12); // a
 });
