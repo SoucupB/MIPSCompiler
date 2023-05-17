@@ -216,7 +216,7 @@ test('loop with if', () => {
     Utils.createInitializationPayload(['int7_t', 'i']),
     Utils.createInitializationPayload(['int7_t', 'a', '5']),
     Utils.createForLoopPayload([Utils.createAssignationPayload(['i', '0']), Utils.createExpression(['i', '<', '5']), Utils.createAssignationPayload(['i', 'i', '+', '1'])], [
-      Utils.createConditionalPayload(Utils.createExpression(['i', '==', '3', '||', 'i', '==', '4']), [
+      Utils.createConditionalPayload(Utils.createExpression(['i', '==', '1', '||', 'i', '==', '3', '||', 'i', '==', '4']), [
         Utils.createAssignationPayload(['a', 'a', '+', 'i']),
       ])
     ]),
@@ -226,5 +226,5 @@ test('loop with if', () => {
   const resp = new RegistersEmbed(code.asm);
   const regMem = resp.executeMips(resp.toMips());
   expect(regMem.memory[0]).toBe(5); // i
-  expect(regMem.memory[1]).toBe(12); // a
+  expect(regMem.memory[1]).toBe(13); // a
 });
