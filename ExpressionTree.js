@@ -71,7 +71,7 @@ class ExpressionTree {
       case tokens.sign_greater: {
         const leftReg = this._getRegisterValue(node.left.id);
         const rightReg = this._getRegisterValue(node.right.id);
-        asm.push(new RegisterEmbed('slt', [this._getRegisterValue(node.id), leftReg, rightReg]));
+        asm.push(new RegisterEmbed('slt', [this._getRegisterValue(node.id), rightReg, leftReg]));
         this._freeRegisters(node.left.id);
         this._freeRegisters(node.right.id);
         break;
@@ -79,7 +79,7 @@ class ExpressionTree {
       case tokens.sign_lower: {
         const leftReg = this._getRegisterValue(node.left.id);
         const rightReg = this._getRegisterValue(node.right.id);
-        asm.push(new RegisterEmbed('slt', [this._getRegisterValue(node.id), rightReg, leftReg]));
+        asm.push(new RegisterEmbed('slt', [this._getRegisterValue(node.id), leftReg, rightReg]));
         this._freeRegisters(node.left.id);
         this._freeRegisters(node.right.id);
         break;

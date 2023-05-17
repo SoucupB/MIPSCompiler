@@ -69,59 +69,71 @@ class RegistersEmbed {
     return null;
   }
 
-  _mips_IsReg(param) {
-    return param.charAt(0) == '$';
-  }
-
   _mips_ExtractReg(param) {
     return parseInt(param.charAt(1));
   }
 
-  executeMips(mipsAsm, registerCount = 16, memCount = 256) {
+  executeMips(mipsAsm, registerCount = 32, memCount = 256) {
     let memory = Array(memCount).fill(0);
     let registers = Array(registerCount).fill(0);
     let i = 0;
     while(i < mipsAsm.length) {
+      const param = mipsAsm[i].params;
       switch(mipsAsm[i].type.toLowerCase()) {
         case 'add': {
-          registers[_mips_ExtractReg(param[0])] = registers[_mips_ExtractReg(param[1])] + registers[_mips_ExtractReg(param[2])]
+          registers[this._mips_ExtractReg(param[0])] = registers[this._mips_ExtractReg(param[1])] + registers[this._mips_ExtractReg(param[2])]
+          break;
+        }
+        case 'mul': {
+          registers[this._mips_ExtractReg(param[0])] = registers[this._mips_ExtractReg(param[1])] * registers[this._mips_ExtractReg(param[2])]
           break;
         }
         case 'addi': {
-          registers[_mips_ExtractReg(param[0])] = registers[_mips_ExtractReg(param[1])] + parseInt(param[2]);
+          registers[this._mips_ExtractReg(param[0])] = registers[this._mips_ExtractReg(param[1])] + parseInt(param[2]);
           break;
         }
         case 'xor': {
-          registers[_mips_ExtractReg(param[0])] = (registers[_mips_ExtractReg(param[1])] ^ registers[_mips_ExtractReg(param[2])])
+          registers[this._mips_ExtractReg(param[0])] = (registers[this._mips_ExtractReg(param[1])] ^ registers[this._mips_ExtractReg(param[2])])
           break;
         }
         case 'sw': {
-          memory[params[2] + registers[_mips_ExtractReg(param[1])]] = _mips_ExtractReg(param[0])
+          memory[param[2] + registers[this._mips_ExtractReg(param[1])]] = registers[this._mips_ExtractReg(param[0])]
           break;
         }
         case 'lw': {
-          registers[_mips_ExtractReg(param[0])] = memory[params[2] + registers[_mips_ExtractReg(param[1])]]
+          registers[this._mips_ExtractReg(param[0])] = memory[param[2] + registers[this._mips_ExtractReg(param[1])]]
           break;
         }
         case 'slt': {
-          registers[_mips_ExtractReg(param[0])] = (registers[_mips_ExtractReg(param[1])] < registers[_mips_ExtractReg(param[2])])
+          registers[this._mips_ExtractReg(param[0])] = (registers[this._mips_ExtractReg(param[1])] < registers[this._mips_ExtractReg(param[2])]) ? 1 : 0
           break;
         }
         case 'bne': {
-          if(registers[_mips_ExtractReg(param[0])] != registers[_mips_ExtractReg(param[1])]) {
-            i = parseInt(param[2]);
+          if(registers[this._mips_ExtractReg(param[0])] != registers[this._mips_ExtractReg(param[1])]) {
+            i = parseInt(param[2] + i);
+          }
+          break;
+        }
+        case 'beq': {
+          if(registers[this._mips_ExtractReg(param[0])] == registers[this._mips_ExtractReg(param[1])]) {
+            i = parseInt(param[2] + i);
           }
           break;
         }
         case 'j': {
-          i = parseInt(param[1]);
-          break;
+          i = parseInt(param[0]);
+          continue;
         }
         default: {
           break;
         }
       }
+      console.log(i);
       i++;
+    }
+    return {
+      memory: memory,
+      registers: registers
     }
   }
 
@@ -131,6 +143,7 @@ class RegistersEmbed {
     let response = [];
     response.push(new RegisterEmbed(`xor`, [this.zeroReg, this.zeroReg, this.zeroReg]))
     response.push(new RegisterEmbed(`addi`, [this.oneReg, this.zeroReg, 1]))
+    let offset = 2;
     for(let i = 0; i < this.asm.length; i++) {
       const params = this.asm[i].params;
       switch(this.asm[i].type.toLowerCase()) {
@@ -143,7 +156,7 @@ class RegistersEmbed {
           break;
         }
         case 'j': {
-          response.push(new RegisterEmbed('j', params))
+          response.push(new RegisterEmbed('j', [params[0] + offset]))
           break;
         }
         case 'mul': {

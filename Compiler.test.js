@@ -305,8 +305,8 @@ test('loop expression v2', () => {
   ]
   const code = new Compiler(toCompile);
   code.compile()
-  const resp = new RegistersEmbed(code.asm).toMips();
-  console.log(code.asm, resp)
+  const resp = new RegistersEmbed(code.asm);
+  console.log(resp.toMips(), resp.executeMips(resp.toMips()))
   // expect(Utils.areRegistersEqual(code.asm, [
   //   new RegisterEmbed('mov', [3,1]),
   //   new RegisterEmbed('mov', ["[1]",3]),
