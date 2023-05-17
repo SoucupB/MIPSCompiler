@@ -19,16 +19,9 @@ test('correct compilation v1', () => {
   ]
   const code = new Compiler(toCompile);
   code.compile()
-  expect(Utils.areRegistersEqual(code.asm, [
-    new RegisterEmbed('mov', [3, 1]),
-    new RegisterEmbed('mov', [4, 2]),
-    new RegisterEmbed('add', [5, 3, 4]),
-    new RegisterEmbed('mov', ['[0]', 5]),
-    new RegisterEmbed('mov', [3, 5]),
-    new RegisterEmbed('mov', [4, 36]),
-    new RegisterEmbed('add', [5, 3, 4]),
-    new RegisterEmbed('mov', ['[0]', 5]),
-  ])).toBe(true)
+  const resp = new RegistersEmbed(code.asm);
+  const regMem = resp.executeMips(resp.toMips());
+  expect(regMem.memory[0]).toBe(41); // a
 });
 
 test('correct compilation v2', () => {
@@ -37,16 +30,9 @@ test('correct compilation v2', () => {
   ]
   const code = new Compiler(toCompile);
   code.compile()
-  expect(Utils.areRegistersEqual(code.asm, [
-    new RegisterEmbed('mov', [3, 1]),
-    new RegisterEmbed('mov', [4, 2]),
-    new RegisterEmbed('mov', [5, 5]),
-    new RegisterEmbed('mul', [6, 4, 5]),
-    new RegisterEmbed('mov', [4, 6]),
-    new RegisterEmbed('mul', [5, 6, 4]),
-    new RegisterEmbed('add', [4, 3, 5]),
-    new RegisterEmbed('mov', ['[0]', 4]),
-  ])).toBe(true)
+  const resp = new RegistersEmbed(code.asm);
+  const regMem = resp.executeMips(resp.toMips());
+  expect(regMem.memory[0]).toBe(61); // a
 });
 
 test('correct compilation v3', () => {
@@ -56,12 +42,10 @@ test('correct compilation v3', () => {
   ]
   const code = new Compiler(toCompile);
   code.compile()
-  expect(Utils.areRegistersEqual(code.asm, [
-    new RegisterEmbed('mov', [3, 1]),
-    new RegisterEmbed('mov', ['[0]', 3]),
-    new RegisterEmbed('mov', [3, 3]),
-    new RegisterEmbed('mov', ['[1]', 3]),
-  ])).toBe(true)
+  const resp = new RegistersEmbed(code.asm);
+  const regMem = resp.executeMips(resp.toMips());
+  expect(regMem.memory[0]).toBe(1); // a
+  expect(regMem.memory[1]).toBe(3); // b
 });
 
 test('correct compilation v4', () => {
@@ -72,12 +56,10 @@ test('correct compilation v4', () => {
   ]
   const code = new Compiler(toCompile);
   code.compile()
-  expect(Utils.areRegistersEqual(code.asm, [
-    new RegisterEmbed('mov', [3, 1]),
-    new RegisterEmbed('mov', ['[0]', 3]),
-    new RegisterEmbed('mov', [3, 5]),
-    new RegisterEmbed('mov', ['[1]', 3]),
-  ])).toBe(true)
+  const resp = new RegistersEmbed(code.asm);
+  const regMem = resp.executeMips(resp.toMips());
+  expect(regMem.memory[0]).toBe(1); // a
+  expect(regMem.memory[1]).toBe(5); // b
 });
 
 test('correct expression with variables', () => {
@@ -87,50 +69,27 @@ test('correct expression with variables', () => {
   ]
   const code = new Compiler(toCompile);
   code.compile()
-  expect(Utils.areRegistersEqual(code.asm, [
-    new RegisterEmbed('mov', [3, 1]),
-    new RegisterEmbed('mov', ['[0]', 3]),
-    new RegisterEmbed('mov', [3, 1]),
-    new RegisterEmbed('mov', [4, '[0]']),
-    new RegisterEmbed('add', [5, 3, 4]),
-    new RegisterEmbed('mov', ['[1]', 5]),
-  ])).toBe(true)
+  const resp = new RegistersEmbed(code.asm);
+  const regMem = resp.executeMips(resp.toMips());
+  expect(regMem.memory[0]).toBe(1); // a
+  expect(regMem.memory[1]).toBe(2); // b
 });
 
 test('correct expression with variables v2', () => {
   const toCompile = [
-    Utils.createInitializationPayload(['int7_t', 'a', '1']),
+    Utils.createInitializationPayload(['int7_t', 'a', '2']),
     Utils.createInitializationPayload(['int7_t', 'b', '3', '+', 'a']),
     Utils.createInitializationPayload(['int7_t', 'c', '4', '+', 'a', '*', 'b']),
     Utils.createInitializationPayload(['int7_t', 'd', '5', '+', 'a', '*', '(', 'b', '+', 'c', ')']),
   ]
   const code = new Compiler(toCompile);
   code.compile()
-  expect(Utils.areRegistersEqual(code.asm, [
-    new RegisterEmbed('mov', [3, 1]),
-    new RegisterEmbed('mov', ['[0]', 3]),
-    new RegisterEmbed('mov', [3, 3]),
-    new RegisterEmbed('mov', [4, '[0]']),
-    new RegisterEmbed('add', [5, 3, 4]),
-    new RegisterEmbed('mov', ['[1]', 5]),
-
-    new RegisterEmbed('mov', [3, 4]),
-    new RegisterEmbed('mov', [4, '[0]']),
-    new RegisterEmbed('mov', [5, '[1]']),
-    new RegisterEmbed('mul', [6, 4, 5]),
-    new RegisterEmbed('add', [4, 3, 6]),
-    new RegisterEmbed('mov', ['[2]', 4]),
-
-    new RegisterEmbed('mov', [3, 5]),
-    new RegisterEmbed('mov', [4, '[0]']),
-    new RegisterEmbed('mov', [5, '[1]']),
-    new RegisterEmbed('mov', [6, '[2]']),
-
-    new RegisterEmbed('add', [7, 5, 6]),
-    new RegisterEmbed('mul', [5, 4, 7]),
-    new RegisterEmbed('add', [4, 3, 5]),
-    new RegisterEmbed('mov', ['[3]', 4]),
-  ])).toBe(true)
+  const resp = new RegistersEmbed(code.asm);
+  const regMem = resp.executeMips(resp.toMips());
+  expect(regMem.memory[0]).toBe(2); // a
+  expect(regMem.memory[1]).toBe(5); // b
+  expect(regMem.memory[2]).toBe(14); // c
+  expect(regMem.memory[3]).toBe(43); // d
 });
 
 test('conditional expression', () => {
@@ -145,31 +104,12 @@ test('conditional expression', () => {
   ]
   const code = new Compiler(toCompile);
   code.compile()
-  expect(Utils.areRegistersEqual(code.asm, [
-    new RegisterEmbed('mov', [3, 1]),
-    new RegisterEmbed('mov', ["[0]", 3]),
-    new RegisterEmbed('mov', [3, 1]),
-    new RegisterEmbed('mov', ["[1]", 3]),
-    new RegisterEmbed('mov', [3, 1]),
-    new RegisterEmbed('mov', [4, 3]),
-    new RegisterEmbed('add', [5, 3, 4]),
-    new RegisterEmbed('mov', [3, 2]),
-    new RegisterEmbed('beq', [3, 5, 2]),
-    new RegisterEmbed('mov', [4, 0]),
-    new RegisterEmbed('jre', [1]),
-    new RegisterEmbed('mov', [4, 1]),
-    new RegisterEmbed('benq', [4, 1, 6]),
-    new RegisterEmbed('mov', [3, 1]),
-    new RegisterEmbed('mov', ["[2]", 3]),
-    new RegisterEmbed('mov', [3, "[2]"]),
-    new RegisterEmbed('mov', [5, 2]),
-    new RegisterEmbed('add', [6, 3, 5]),
-    new RegisterEmbed('mov', ["[1]", 6]),
-    new RegisterEmbed('mov', [3, 5]),
-    new RegisterEmbed('mov', [5, "[1]"]),
-    new RegisterEmbed('add', [6, 3, 5]),
-    new RegisterEmbed('mov', ["[3]", 6]),
-  ])).toBe(true)
+  const resp = new RegistersEmbed(code.asm);
+  const regMem = resp.executeMips(resp.toMips());
+  expect(regMem.memory[0]).toBe(1); // a
+  expect(regMem.memory[1]).toBe(1); // c
+  expect(regMem.memory[2]).toBe(0); // b
+  expect(regMem.memory[3]).toBe(6); // d
 });
 
 test('conditional expression v2', () => {
@@ -188,46 +128,12 @@ test('conditional expression v2', () => {
   ]
   const code = new Compiler(toCompile);
   code.compile()
-  expect(Utils.areRegistersEqual(code.asm, [
-    new RegisterEmbed('mov', [3, 1]),
-    new RegisterEmbed('mov', ["[0]", 3]),
-    new RegisterEmbed('mov', [3, 1]),
-    new RegisterEmbed('mov', ["[1]", 3]),
-    new RegisterEmbed('mov', [3, 1]),
-    new RegisterEmbed('mov', [4, 3]),
-    new RegisterEmbed('add', [5, 3, 4]),
-    new RegisterEmbed('mov', [3, 2]),
-    new RegisterEmbed('beq', [3, 5, 2]),
-    new RegisterEmbed('mov', [4, 0]),
-    new RegisterEmbed('jre', [1]),
-    new RegisterEmbed('mov', [4, 1]),
-    new RegisterEmbed('benq', [4, 1, 21]),
-    new RegisterEmbed('mov', [3, 1]),
-    new RegisterEmbed('mov', ["[2]", 3]),
-    new RegisterEmbed('mov', [3, "[2]"]),
-    new RegisterEmbed('mov', [5, 2]),
-    new RegisterEmbed('add', [6, 3, 5]),
-    new RegisterEmbed('mov', ["[1]", 6]),
-    new RegisterEmbed('mov', [3, 5]),
-    new RegisterEmbed('mov', [5, 3]),
-    new RegisterEmbed('add', [6, 3, 5]),
-    new RegisterEmbed('mov', [3, 2]),
-    new RegisterEmbed('beq', [3, 6, 2]),
-    new RegisterEmbed('mov', [5, 0]),
-    new RegisterEmbed('jre', [1]),
-    new RegisterEmbed('mov', [5, 1]),
-    new RegisterEmbed('benq', [5, 1, 6]),
-    new RegisterEmbed('mov', [3, 15]),
-    new RegisterEmbed('mov', ["[2]", 3]),
-    new RegisterEmbed('mov', [3, "[2]"]),
-    new RegisterEmbed('mov', [6, 2]),
-    new RegisterEmbed('add', [7, 3, 6]),
-    new RegisterEmbed('mov', ["[0]", 7]),
-    new RegisterEmbed('mov', [3, 5]),
-    new RegisterEmbed('mov', [6, "[1]"]),
-    new RegisterEmbed('add', [7, 3, 6]),
-    new RegisterEmbed('mov', ["[3]", 7]),
-  ])).toBe(true)
+  const resp = new RegistersEmbed(code.asm);
+  const regMem = resp.executeMips(resp.toMips());
+  expect(regMem.memory[0]).toBe(1); // a
+  expect(regMem.memory[1]).toBe(1); // c
+  expect(regMem.memory[2]).toBe(0); // b
+  expect(regMem.memory[3]).toBe(6); // d
 });
 
 test('conditional expression v3', () => {
@@ -240,22 +146,11 @@ test('conditional expression v3', () => {
   ]
   const code = new Compiler(toCompile);
   code.compile()
-  expect(Utils.areRegistersEqual(code.asm, [
-    new RegisterEmbed('mov', [3, 1]),
-    new RegisterEmbed('mov', ["[0]", 3]),
-    new RegisterEmbed('mov', [3, 1]),
-    new RegisterEmbed('mov', [4, 3]),
-    new RegisterEmbed('add', [5, 3, 4]),
-    new RegisterEmbed('mov', [3, 2]),
-    new RegisterEmbed('slt', [4, 3, 5]),
-    new RegisterEmbed('benq', [4, 1, 2]),
-    new RegisterEmbed('mov', [3, 1]),
-    new RegisterEmbed('mov', ["[1]", 3]),
-    new RegisterEmbed('mov', [3, 5]),
-    new RegisterEmbed('mov', [5, "[0]"]),
-    new RegisterEmbed('add', [6, 3, 5]),
-    new RegisterEmbed('mov', ["[2]", 6]),
-  ])).toBe(true)
+  const resp = new RegistersEmbed(code.asm);
+  const regMem = resp.executeMips(resp.toMips());
+  expect(regMem.memory[0]).toBe(1); // c
+  expect(regMem.memory[1]).toBe(0); // b
+  expect(regMem.memory[2]).toBe(6); // d
 });
 
 test('loop expression v1', () => {
@@ -269,29 +164,11 @@ test('loop expression v1', () => {
   ]
   const code = new Compiler(toCompile);
   code.compile()
-  expect(Utils.areRegistersEqual(code.asm, [
-    new RegisterEmbed('mov', [3,1]),
-    new RegisterEmbed('mov', ["[1]",3]),
-    new RegisterEmbed('mov', [3,0]),
-    new RegisterEmbed('mov', ["[0]",3]),
-    new RegisterEmbed('mov', [3,"[0]"]),
-    new RegisterEmbed('mov', [4,5]),
-    new RegisterEmbed('slt', [5,4,3]),
-    new RegisterEmbed('benq', [5,1,9]),
-    new RegisterEmbed('mov', [3,"[1]"]),
-    new RegisterEmbed('mov', [4,1]),
-    new RegisterEmbed('add', [6,3,4]),
-    new RegisterEmbed('mov', ["[1]",6]),
-    new RegisterEmbed('mov', [3,"[0]"]),
-    new RegisterEmbed('mov', [4,1]),
-    new RegisterEmbed('add', [6,3,4]),
-    new RegisterEmbed('mov', ["[0]",6]),
-    new RegisterEmbed('j', [4]),
-    new RegisterEmbed('mov', [3,5]),
-    new RegisterEmbed('mov', [4,"[1]"]),
-    new RegisterEmbed('add', [6,3,4]),
-    new RegisterEmbed('mov', ["[2]",6]),
-  ])).toBe(true)
+  const resp = new RegistersEmbed(code.asm);
+  const regMem = resp.executeMips(resp.toMips());
+  expect(regMem.memory[0]).toBe(5); // c
+  expect(regMem.memory[1]).toBe(6); // b
+  expect(regMem.memory[2]).toBe(11); // a
 });
 
 test('loop expression v2', () => {
@@ -307,7 +184,7 @@ test('loop expression v2', () => {
   code.compile()
   const resp = new RegistersEmbed(code.asm);
   const regMem = resp.executeMips(resp.toMips());
-  expect(regMem.memory[0]).toBe(6);
-  expect(regMem.memory[1]).toBe(3);
-  expect(regMem.memory[2]).toBe(8);
+  expect(regMem.memory[0]).toBe(6); // c
+  expect(regMem.memory[1]).toBe(3); // b
+  expect(regMem.memory[2]).toBe(8); // a
 });

@@ -136,6 +136,15 @@ class RegistersEmbed {
     }
   }
 
+  toMipsString() {
+    const mipsCode = this.toMips();
+    let response = [];
+    for(let i = 0; i < mipsCode.length; i++) {
+      response.push(`${i}: ${mipsCode[i].type} ${mipsCode[i].params.join(' ')}`)
+    }
+    return response.join('\n')
+  }
+
   toMips() {
     this.zeroReg = '$0'
     this.oneReg = '$1'
@@ -163,7 +172,7 @@ class RegistersEmbed {
           break;
         }
         case 'jre': {
-          response.push(new RegisterEmbed('j', [params[0] + i + 1]))
+          response.push(new RegisterEmbed('j', [params[0] + i + 1 + offset]))
           break;
         }
         case 'benq': {
