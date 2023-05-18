@@ -98,7 +98,7 @@ class RegistersEmbed {
         }
         case 'div': {
           specialRegisters.mfhi = registers[this._mips_ExtractReg(param[0])] % registers[this._mips_ExtractReg(param[1])];
-          specialRegisters.mflo = registers[this._mips_ExtractReg(param[0])] / registers[this._mips_ExtractReg(param[1])];
+          specialRegisters.mflo = Math.floor(registers[this._mips_ExtractReg(param[0])] / registers[this._mips_ExtractReg(param[1])]);
           break;
         }
         case 'mflo': {
