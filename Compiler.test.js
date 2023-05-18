@@ -238,7 +238,7 @@ test('loop with sum/mod', () => {
       Utils.createConditionalPayload(Utils.createExpression(['i', '%', '2', '==', '0']), [
         Utils.createAssignationPayload(['a', 'a', '+', 'i']),
       ]),
-      Utils.createConditionalPayload(Utils.createExpression(['i', '%', '2', '>', '0']), [
+      Utils.createConditionalPayload(Utils.createExpression(['i', '%', '2', '!=', '0']), [
         Utils.createAssignationPayload(['b', 'b', '+', 'i']),
       ])
     ]),

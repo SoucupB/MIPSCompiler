@@ -127,6 +127,12 @@ class Utils {
           })
           break;
         }
+        case '!=': {
+          response.push({
+            token: tokens.sign_not_equal
+          })
+          break;
+        }
         default: {
           const isNum = Utils.isNumber(payload[i]);
           response.push({

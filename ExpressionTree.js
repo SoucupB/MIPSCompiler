@@ -104,6 +104,17 @@ class ExpressionTree {
         this._freeRegisters(node.right.id);
         break;
       }
+      case tokens.sign_not_equal: {
+        const leftReg = this._getRegisterValue(node.left.id);
+        const rightReg = this._getRegisterValue(node.right.id);
+        asm.push(new RegisterEmbed('benq', [rightReg, leftReg, 2]));
+        asm.push(new RegisterEmbed('mov', [this._getRegisterValue(node.id), 0]));
+        asm.push(new RegisterEmbed('jre', [1]));
+        asm.push(new RegisterEmbed('mov', [this._getRegisterValue(node.id), 1]));
+        this._freeRegisters(node.left.id);
+        this._freeRegisters(node.right.id);
+        break;
+      }
       case tokens.sign_double_or: {
         const leftReg = this._getRegisterValue(node.left.id);
         const rightReg = this._getRegisterValue(node.right.id);
@@ -210,7 +221,7 @@ class ExpressionNode {
 
   parse(expression) {
     return this.create_tree(expression, [0], 0, [[tokens.sign_double_and, tokens.sign_double_or],
-                                                 [tokens.sign_greater, tokens.sign_lower, tokens.sign_double_equal],
+                                                 [tokens.sign_greater, tokens.sign_lower, tokens.sign_double_equal, tokens.sign_not_equal],
                                                  [tokens.sign_plus, tokens.sign_minus],
                                                  [tokens.sign_mul, tokens.sign_div, tokens.sign_mod]]);
   }
