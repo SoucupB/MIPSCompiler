@@ -142,6 +142,19 @@ class ExpressionTree {
     }
   }
 
+  _addSpecialModDivArithmetics(mod = 'div', node, asm) {
+    let regInstruction = 'mfhi'
+    if(mod == 'div') {
+      regInstruction = 'mflo'
+    }
+    const leftReg = this._getRegisterValue(node.left.id);
+    const rightReg = this._getRegisterValue(node.right.id);
+    asm.push(new RegisterEmbed('div', [leftReg, rightReg]));
+    asm.push(new RegisterEmbed(regInstruction, [this._getRegisterValue(node.id)]));
+    this._freeRegisters(node.left.id);
+    this._freeRegisters(node.right.id);
+  }
+
   toRegister_t(node, asm) {
     if(node.left == null && node.right == null) {
       asm.push(this.pushAssignationAsm(node));
@@ -163,7 +176,11 @@ class ExpressionTree {
         break;
       }
       case tokens.sign_div: {
-        this._addArithmeticRegisterToAsm('div', node, asm)
+        this._addSpecialModDivArithmetics('div', node, asm)
+        break;
+      }
+      case tokens.sign_mod: {
+        this._addSpecialModDivArithmetics('mod', node, asm)
         break;
       }
       default: {
@@ -195,7 +212,7 @@ class ExpressionNode {
     return this.create_tree(expression, [0], 0, [[tokens.sign_double_and, tokens.sign_double_or],
                                                  [tokens.sign_greater, tokens.sign_lower, tokens.sign_double_equal],
                                                  [tokens.sign_plus, tokens.sign_minus],
-                                                 [tokens.sign_mul, tokens.sign_div]]);
+                                                 [tokens.sign_mul, tokens.sign_div, tokens.sign_mod]]);
   }
 
   getNode(value, type = null) {

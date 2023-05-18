@@ -15,7 +15,8 @@ const tokens = {
   sign_greater: 13,
   sign_lower: 14,
   sign_double_equal: 15,
-  if_instruction: 16
+  if_instruction: 16,
+  sign_mod: 17
 }
 
 module.exports = { tokens };

@@ -79,6 +79,12 @@ class Utils {
           })
           break;
         }
+        case '%': {
+          response.push({
+            token: tokens.sign_mod
+          })
+          break;
+        }
         case '(': {
           response.push({
             token: tokens.sign_open_paranth
