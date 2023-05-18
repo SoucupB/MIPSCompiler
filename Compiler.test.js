@@ -255,7 +255,7 @@ test('loop with sum/mod', () => {
 test('sum of digits', () => {
   const toCompile = [
     Utils.createInitializationPayload(['int7_t', 'i']),
-    Utils.createInitializationPayload(['int7_t', 'a', '93214']),
+    Utils.createInitializationPayload(['int7_t', 'a', '932141']),
     Utils.createInitializationPayload(['int7_t', 'count', '0']),
     Utils.createInitializationPayload(['int7_t', 'sum', '0']),
     Utils.createForLoopPayload([Utils.createAssignationPayload(['i', '0']), Utils.createExpression(['i', '==', '0']), Utils.createAssignationPayload(['a', 'a', '/', '10'])], [
@@ -270,7 +270,7 @@ test('sum of digits', () => {
   code.compile()
   const resp = new RegistersEmbed(code.asm);
   const regMem = resp.executeMips(resp.toMips());
-  expect(regMem.memory[2]).toBe(6); // i
+  expect(regMem.memory[2]).toBe(7); // i
   expect(regMem.memory[1]).toBe(0);
-  expect(regMem.memory[3]).toBe(19);
+  expect(regMem.memory[3]).toBe(20);
 });
