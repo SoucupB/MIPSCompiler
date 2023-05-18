@@ -271,6 +271,6 @@ test('sum of digits', () => {
   const resp = new RegistersEmbed(code.asm);
   const regMem = resp.executeMips(resp.toMips());
   expect(regMem.memory[2]).toBe(7); // i
-  expect(regMem.memory[1]).toBe(0);
-  expect(regMem.memory[3]).toBe(20);
+  expect(regMem.memory[1]).toBe(0); // a
+  expect(regMem.memory[3]).toBe(20); // sum
 });
