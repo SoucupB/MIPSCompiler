@@ -234,7 +234,7 @@ test('loop with sum/mod', () => {
     Utils.createInitializationPayload(['int7_t', 'i']),
     Utils.createInitializationPayload(['int7_t', 'a', '0']),
     Utils.createInitializationPayload(['int7_t', 'b', '0']),
-    Utils.createForLoopPayload([Utils.createAssignationPayload(['i', '0']), Utils.createExpression(['i', '<', '5']), Utils.createAssignationPayload(['i', 'i', '+', '1'])], [
+    Utils.createForLoopPayload([Utils.createAssignationPayload(['i', '0']), Utils.createExpression(['i', '<', '10']), Utils.createAssignationPayload(['i', 'i', '+', '1'])], [
       Utils.createConditionalPayload(Utils.createExpression(['i', '%', '2', '==', '0']), [
         Utils.createAssignationPayload(['a', 'a', '+', 'i']),
       ]),
@@ -247,9 +247,9 @@ test('loop with sum/mod', () => {
   code.compile()
   const resp = new RegistersEmbed(code.asm);
   const regMem = resp.executeMips(resp.toMips());
-  expect(regMem.memory[0]).toBe(5); // i
-  expect(regMem.memory[1]).toBe(6); // a
-  expect(regMem.memory[2]).toBe(4); // b
+  expect(regMem.memory[0]).toBe(10); // i
+  expect(regMem.memory[1]).toBe(20); // a
+  expect(regMem.memory[2]).toBe(25); // b
 });
 
 test('sum of digits', () => {
