@@ -77,6 +77,10 @@ class RegistersEmbed {
     let memory = Array(memCount).fill(0);
     let registers = Array(registerCount).fill(0);
     let i = 0;
+    let specialRegisters = {
+      mfhi: 0,
+      mflo: 0
+    }
     while(i < mipsAsm.length) {
       const param = mipsAsm[i].params;
       switch(mipsAsm[i].type.toLowerCase()) {
@@ -90,6 +94,19 @@ class RegistersEmbed {
         }
         case 'and': {
           registers[this._mips_ExtractReg(param[0])] = (registers[this._mips_ExtractReg(param[1])] != 0 && registers[this._mips_ExtractReg(param[2])] != 0) ? 1 : 0
+          break;
+        }
+        case 'div': {
+          specialRegisters.mfhi = registers[this._mips_ExtractReg(param[0])] % registers[this._mips_ExtractReg(param[1])];
+          specialRegisters.mflo = registers[this._mips_ExtractReg(param[0])] / registers[this._mips_ExtractReg(param[1])];
+          break;
+        }
+        case 'mflo': {
+          registers[this._mips_ExtractReg(param[0])] = specialRegisters.mflo
+          break;
+        }
+        case 'mfhi': {
+          registers[this._mips_ExtractReg(param[0])] = specialRegisters.mfhi
           break;
         }
         case 'mul': {
@@ -169,6 +186,18 @@ class RegistersEmbed {
         }
         case 'add': {
           response.push(new RegisterEmbed('add', [`$${params[0]}`, `$${params[1]}`, `$${params[2]}`]))
+          break;
+        }
+        case 'div': {
+          response.push(new RegisterEmbed('div', [`$${params[0]}`, `$${params[1]}`]))
+          break;
+        }
+        case 'mflo': {
+          response.push(new RegisterEmbed('mflo', [`$${params[0]}`]))
+          break;
+        }
+        case 'mfhi': {
+          response.push(new RegisterEmbed('mfhi', [`$${params[0]}`]))
           break;
         }
         case 'or': {
