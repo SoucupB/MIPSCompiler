@@ -293,7 +293,7 @@ class Parser {
     }
     let conditional = this.getConditional(str, index);
     if(conditional) {
-      return Utils.createForLoopPayload([forLoop[0]], forLoop.slice(1));
+      return Utils.createConditionalPayload([forLoop[0]], forLoop.slice(1));
     }
     return null;
   }
