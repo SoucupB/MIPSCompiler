@@ -293,7 +293,7 @@ class Parser {
     }
     let conditional = this.getConditional(str, index);
     if(conditional) {
-      return Utils.createConditionalPayload([forLoop[0]], forLoop.slice(1));
+      return Utils.createConditionalPayload([conditional[0]], conditional.slice(1));
     }
     return null;
   }
@@ -337,6 +337,9 @@ for(b = 0; b < 5; b = b + 1) {
   c = a + 3;
 }
 int d = 9;
+if(d > 10) {
+  c = 1;
+}
 `
 
 const parse = new Parser(codeToCompile2);
