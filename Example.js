@@ -7,7 +7,7 @@ const example = [
     payload: [
       {
         token: tokens.data_type,
-        payload: 'int7_t'
+        payload: 'int'
       },
       {
         token: tokens.variable,
@@ -36,7 +36,7 @@ const example = [
     payload: [
       {
         token: tokens.data_type,
-        payload: 'int7_t'
+        payload: 'int'
       },
       {
         token: tokens.variable,

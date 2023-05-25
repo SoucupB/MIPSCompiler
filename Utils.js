@@ -8,7 +8,7 @@
 const { tokens } = require('./Token')
 
 class Utils {
-  static _iterateThroughNonTokensSeparators(string, index) {
+  static iterateThroughNonTokensSeparators(string, index) {
     while(index[0] < string.length && (string[index[0]] == '\n' || string[index[0]] == '\t' || string[index[0]] == '\t\n' || string[index[0]] == ' ')) {
       index[0]++;
     }
@@ -18,30 +18,31 @@ class Utils {
     return index < a.length && expectedIndex < b.length && a[index] == b[expectedIndex];
   }
 
-  static _toTest(token, expected) {
+  static _isNormalChar(string, index) {
+    return index < string.length && !(string[index] == '\n' || string[index] == '\t' || string[index] == '\t\n' || string[index] == ' ')
+  }
+
+  static _isEqual(token, expected) {
     return token === expected;
   }
 
   static expectString(string, expected, index) {
-    let expectedIndex = 0;
-    Utils._iterateThroughNonTokensSeparators(string, index);
+    Utils.iterateThroughNonTokensSeparators(string, index);
     let i = index[0];
-    let toCompare = Utils._equals;
-    let testCondition = Utils._toTest;
+    let toCompare = Utils._isEqual;
     let token = "";
     if(expected.type == 'dynamic') {
       toCompare = expected.comparer;
-      testCondition = expected.testCondition;
     }
-    while(toCompare(string, expected.payload, i, expectedIndex)) {
+    while(Utils._isNormalChar(string, i)) {
       token += string[i];
       i++;
     }
-    if(testCondition(token, expected.payload)) {
-      index[0] = i;
-      return true;
+    if(!toCompare(expected.payload, token)) {
+      return false;
     }
-    return false;
+    index[0] = i;
+    return true;
   }
 
   static isNumber(number) {

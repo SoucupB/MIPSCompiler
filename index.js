@@ -1,18 +1,18 @@
 const MipsAstParser = require('./Mips_ast');
 
 const codeToCompile1 = `
-int7_t ana = 5;
-int7_t vasile = 6;
+int ana = 5;
+int vasile = 6;
 
-int7_t ionel;
-int7_t i;
+int ionel;
+int i;
 for(i = 0; i < ana; i++) {
   ionel = ionel + vasile;
 }
 `
 
 const codeToCompile2 = `
-int7_t ana = 5 + 33;
+int ana = 5 + 33;
 `
 
 const mips = new MipsAstParser({

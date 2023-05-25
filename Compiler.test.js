@@ -4,17 +4,9 @@ const { tokens } = require('./Token')
 const Compiler = require('./Compiler')
 const { Utils } = require('./Utils')
 
-function codeToString(asm) {
-  let stre = ""
-  for (let i = 0; i < asm.length; i++) {
-    stre += `new RegisterEmbed('${asm[i].type}', ${JSON.stringify(asm[i].params)}),\n`;
-  }
-  console.log(stre)
-}
-
 test('correct compilation v1', () => {
   const toCompile = [
-    Utils.createInitializationPayload(['int7_t', 'yolo', '1', '+', '2']),
+    Utils.createInitializationPayload(['int', 'yolo', '1', '+', '2']),
     Utils.createAssignationPayload(['yolo', '5', '+', '36'])
   ]
   const code = new Compiler(toCompile);
@@ -26,7 +18,7 @@ test('correct compilation v1', () => {
 
 test('correct compilation v2', () => {
   const toCompile = [
-    Utils.createInitializationPayload(['int7_t', 'a', '1', '+', '2', '*', '5', '*', '6']),
+    Utils.createInitializationPayload(['int', 'a', '1', '+', '2', '*', '5', '*', '6']),
   ]
   const code = new Compiler(toCompile);
   code.compile()
@@ -37,8 +29,8 @@ test('correct compilation v2', () => {
 
 test('correct compilation v3', () => {
   const toCompile = [
-    Utils.createInitializationPayload(['int7_t', 'a', '1']),
-    Utils.createInitializationPayload(['int7_t', 'b', '3']),
+    Utils.createInitializationPayload(['int', 'a', '1']),
+    Utils.createInitializationPayload(['int', 'b', '3']),
   ]
   const code = new Compiler(toCompile);
   code.compile()
@@ -50,8 +42,8 @@ test('correct compilation v3', () => {
 
 test('correct compilation v4', () => {
   const toCompile = [
-    Utils.createInitializationPayload(['int7_t', 'a', '1']),
-    Utils.createInitializationPayload(['int7_t', 'b']),
+    Utils.createInitializationPayload(['int', 'a', '1']),
+    Utils.createInitializationPayload(['int', 'b']),
     Utils.createAssignationPayload(['b', '5'])
   ]
   const code = new Compiler(toCompile);
@@ -64,8 +56,8 @@ test('correct compilation v4', () => {
 
 test('correct expression with variables', () => {
   const toCompile = [
-    Utils.createInitializationPayload(['int7_t', 'a', '1']),
-    Utils.createInitializationPayload(['int7_t', 'b', '1', '+', 'a']),
+    Utils.createInitializationPayload(['int', 'a', '1']),
+    Utils.createInitializationPayload(['int', 'b', '1', '+', 'a']),
   ]
   const code = new Compiler(toCompile);
   code.compile()
@@ -77,10 +69,10 @@ test('correct expression with variables', () => {
 
 test('correct expression with variables v2', () => {
   const toCompile = [
-    Utils.createInitializationPayload(['int7_t', 'a', '2']),
-    Utils.createInitializationPayload(['int7_t', 'b', '3', '+', 'a']),
-    Utils.createInitializationPayload(['int7_t', 'c', '4', '+', 'a', '*', 'b']),
-    Utils.createInitializationPayload(['int7_t', 'd', '5', '+', 'a', '*', '(', 'b', '+', 'c', ')']),
+    Utils.createInitializationPayload(['int', 'a', '2']),
+    Utils.createInitializationPayload(['int', 'b', '3', '+', 'a']),
+    Utils.createInitializationPayload(['int', 'c', '4', '+', 'a', '*', 'b']),
+    Utils.createInitializationPayload(['int', 'd', '5', '+', 'a', '*', '(', 'b', '+', 'c', ')']),
   ]
   const code = new Compiler(toCompile);
   code.compile()
@@ -94,13 +86,13 @@ test('correct expression with variables v2', () => {
 
 test('conditional expression', () => {
   const toCompile = [
-    Utils.createInitializationPayload(['int7_t', 'a', '1']),
-    Utils.createInitializationPayload(['int7_t', 'c', '1']),
+    Utils.createInitializationPayload(['int', 'a', '1']),
+    Utils.createInitializationPayload(['int', 'c', '1']),
     Utils.createConditionalPayload(Utils.createExpression(['1', '+', '3', '==', '2']), [
-      Utils.createInitializationPayload(['int7_t', 'b', '1']),
+      Utils.createInitializationPayload(['int', 'b', '1']),
       Utils.createAssignationPayload(['c', 'b', '+', '2'])
     ]),
-    Utils.createInitializationPayload(['int7_t', 'd', '5', '+', 'c'])
+    Utils.createInitializationPayload(['int', 'd', '5', '+', 'c'])
   ]
   const code = new Compiler(toCompile);
   code.compile()
@@ -114,17 +106,17 @@ test('conditional expression', () => {
 
 test('conditional expression v2', () => {
   const toCompile = [
-    Utils.createInitializationPayload(['int7_t', 'a', '1']),
-    Utils.createInitializationPayload(['int7_t', 'c', '1']),
+    Utils.createInitializationPayload(['int', 'a', '1']),
+    Utils.createInitializationPayload(['int', 'c', '1']),
     Utils.createConditionalPayload(Utils.createExpression(['1', '+', '3', '==', '2']), [
-      Utils.createInitializationPayload(['int7_t', 'b', '1']),
+      Utils.createInitializationPayload(['int', 'b', '1']),
       Utils.createAssignationPayload(['c', 'b', '+', '2']),
       Utils.createConditionalPayload(Utils.createExpression(['5', '+', '3', '==', '2']), [
         Utils.createAssignationPayload(['b', '15']),
         Utils.createAssignationPayload(['a', 'b', '+', '2'])
       ]),
     ]),
-    Utils.createInitializationPayload(['int7_t', 'd', '5', '+', 'c'])
+    Utils.createInitializationPayload(['int', 'd', '5', '+', 'c'])
   ]
   const code = new Compiler(toCompile);
   code.compile()
@@ -138,11 +130,11 @@ test('conditional expression v2', () => {
 
 test('conditional expression v3', () => {
   const toCompile = [
-    Utils.createInitializationPayload(['int7_t', 'c', '1']),
+    Utils.createInitializationPayload(['int', 'c', '1']),
     Utils.createConditionalPayload(Utils.createExpression(['1', '+', '3', '<', '2']), [
-      Utils.createInitializationPayload(['int7_t', 'b', '1']),
+      Utils.createInitializationPayload(['int', 'b', '1']),
     ]),
-    Utils.createInitializationPayload(['int7_t', 'd', '5', '+', 'c'])
+    Utils.createInitializationPayload(['int', 'd', '5', '+', 'c'])
   ]
   const code = new Compiler(toCompile);
   code.compile()
@@ -155,12 +147,12 @@ test('conditional expression v3', () => {
 
 test('loop expression v1', () => {
   const toCompile = [
-    Utils.createInitializationPayload(['int7_t', 'c']),
-    Utils.createInitializationPayload(['int7_t', 'b', '1']),
+    Utils.createInitializationPayload(['int', 'c']),
+    Utils.createInitializationPayload(['int', 'b', '1']),
     Utils.createForLoopPayload([Utils.createAssignationPayload(['c', '0']), Utils.createExpression(['c', '<', '5']), Utils.createAssignationPayload(['c', 'c', '+', '1'])], [
       Utils.createAssignationPayload(['b', 'b', '+', '1']),
     ]),
-    Utils.createInitializationPayload(['int7_t', 'a', '5', '+', 'b'])
+    Utils.createInitializationPayload(['int', 'a', '5', '+', 'b'])
   ]
   const code = new Compiler(toCompile);
   code.compile()
@@ -173,12 +165,12 @@ test('loop expression v1', () => {
 
 test('loop expression v2', () => {
   const toCompile = [
-    Utils.createInitializationPayload(['int7_t', 'c']),
-    Utils.createInitializationPayload(['int7_t', 'b', '1']),
+    Utils.createInitializationPayload(['int', 'c']),
+    Utils.createInitializationPayload(['int', 'b', '1']),
     Utils.createForLoopPayload([Utils.createAssignationPayload(['c', '0']), Utils.createExpression(['c', '+', '1', '<', '5']), Utils.createAssignationPayload(['c', 'c', '+', '3'])], [
       Utils.createAssignationPayload(['b', 'b', '+', '1']),
     ]),
-    Utils.createInitializationPayload(['int7_t', 'a', '5', '+', 'b'])
+    Utils.createInitializationPayload(['int', 'a', '5', '+', 'b'])
   ]
   const code = new Compiler(toCompile);
   code.compile()
@@ -191,10 +183,10 @@ test('loop expression v2', () => {
 
 test('loop fibbonachi', () => {
   const toCompile = [
-    Utils.createInitializationPayload(['int7_t', 'i']),
-    Utils.createInitializationPayload(['int7_t', 'a', '1']),
-    Utils.createInitializationPayload(['int7_t', 'b', '1']),
-    Utils.createInitializationPayload(['int7_t', 'c']),
+    Utils.createInitializationPayload(['int', 'i']),
+    Utils.createInitializationPayload(['int', 'a', '1']),
+    Utils.createInitializationPayload(['int', 'b', '1']),
+    Utils.createInitializationPayload(['int', 'c']),
     Utils.createForLoopPayload([Utils.createAssignationPayload(['i', '0']), Utils.createExpression(['i', '<', '8']), Utils.createAssignationPayload(['i', 'i', '+', '1'])], [
       Utils.createAssignationPayload(['c', 'a', '+', 'b']),
       Utils.createAssignationPayload(['a', 'b']),
@@ -213,8 +205,8 @@ test('loop fibbonachi', () => {
 
 test('loop with if', () => {
   const toCompile = [
-    Utils.createInitializationPayload(['int7_t', 'i']),
-    Utils.createInitializationPayload(['int7_t', 'a', '5']),
+    Utils.createInitializationPayload(['int', 'i']),
+    Utils.createInitializationPayload(['int', 'a', '5']),
     Utils.createForLoopPayload([Utils.createAssignationPayload(['i', '0']), Utils.createExpression(['i', '<', '5']), Utils.createAssignationPayload(['i', 'i', '+', '1'])], [
       Utils.createConditionalPayload(Utils.createExpression(['i', '==', '1', '||', 'i', '==', '3', '||', 'i', '==', '4']), [
         Utils.createAssignationPayload(['a', 'a', '+', 'i']),
@@ -231,9 +223,9 @@ test('loop with if', () => {
 
 test('loop with sum/mod', () => {
   const toCompile = [
-    Utils.createInitializationPayload(['int7_t', 'i']),
-    Utils.createInitializationPayload(['int7_t', 'a', '0']),
-    Utils.createInitializationPayload(['int7_t', 'b', '0']),
+    Utils.createInitializationPayload(['int', 'i']),
+    Utils.createInitializationPayload(['int', 'a', '0']),
+    Utils.createInitializationPayload(['int', 'b', '0']),
     Utils.createForLoopPayload([Utils.createAssignationPayload(['i', '0']), Utils.createExpression(['i', '<', '10']), Utils.createAssignationPayload(['i', 'i', '+', '1'])], [
       Utils.createConditionalPayload(Utils.createExpression(['i', '%', '2', '==', '0']), [
         Utils.createAssignationPayload(['a', 'a', '+', 'i']),
@@ -254,10 +246,10 @@ test('loop with sum/mod', () => {
 
 test('sum of digits', () => {
   const toCompile = [
-    Utils.createInitializationPayload(['int7_t', 'i']),
-    Utils.createInitializationPayload(['int7_t', 'a', '932141']),
-    Utils.createInitializationPayload(['int7_t', 'count', '0']),
-    Utils.createInitializationPayload(['int7_t', 'sum', '0']),
+    Utils.createInitializationPayload(['int', 'i']),
+    Utils.createInitializationPayload(['int', 'a', '932141']),
+    Utils.createInitializationPayload(['int', 'count', '0']),
+    Utils.createInitializationPayload(['int', 'sum', '0']),
     Utils.createForLoopPayload([Utils.createAssignationPayload(['i', '0']), Utils.createExpression(['i', '==', '0']), Utils.createAssignationPayload(['a', 'a', '/', '10'])], [
       Utils.createConditionalPayload(Utils.createExpression(['a', '==', '0']), [
         Utils.createAssignationPayload(['i', '1']),
@@ -270,6 +262,7 @@ test('sum of digits', () => {
   code.compile()
   const resp = new RegistersEmbed(code.asm);
   const regMem = resp.executeMips(resp.toMips());
+  console.log(resp.toMipsString())
   expect(regMem.memory[2]).toBe(7); // i
   expect(regMem.memory[1]).toBe(0); // a
   expect(regMem.memory[3]).toBe(20); // sum
