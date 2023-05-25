@@ -85,7 +85,7 @@ class Parser {
   }
 
   _isSign(chr) {
-    return chr == '|' || chr == '-' || chr == '+' || chr == '*' || chr == '/' || chr == '%' || chr == '&';
+    return chr == '|' || chr == '-' || chr == '+' || chr == '*' || chr == '/' || chr == '%' || chr == '&' || chr == '=' || chr == '<' || chr == '>';
   }
 
   _extractParanthesisOperations(str, index, instructions) {
@@ -172,7 +172,7 @@ class Parser {
     return false;
   }
 
-  parseInstructions(str, index, toParse) {
+  parseInstructions(str, index, toParse, implicit = true) {
     let tokens = [];
     let newIndex = [index[0]]
     for(let i = 0; i < toParse.length; i++) {
@@ -183,7 +183,28 @@ class Parser {
           continue;
         }
         case '$expression': {
-          tokens = tokens.concat(this.expectExpression(str, newIndex))
+          if(implicit) {
+            tokens = tokens.concat(this.expectExpression(str, newIndex));
+          }
+          else {
+            tokens.push(this.expectExpression(str, newIndex, true))
+          }
+          continue;
+        }
+        case '$assignation': {
+          if(implicit) {
+            tokens = tokens.concat(this.getAssignationTokens(str, newIndex, false));
+          }
+          else {
+            tokens.push(this.getAssignation(str, newIndex, false));
+          }
+          continue;
+        }
+        case '$code': {
+          const newInstructions = this.parse_t(str, newIndex);
+          if(newInstructions) {
+            tokens = tokens.concat(newInstructions);
+          }
           continue;
         }
         default: {
@@ -193,17 +214,51 @@ class Parser {
       if(!this._jump(str, newIndex, toParse[i])) {
         return false
       }
-      tokens.push(toParse[i]);
+      if(implicit) {
+        tokens.push(toParse[i]);
+      }
     }
     index[0] = newIndex[0];
-    console.log(tokens)
     return tokens;
+  }
+
+  getAssignationTokens(str, index, withTerminationStr = true) {
+    let toExpect = ['$var', '=', '$expression']
+    if(withTerminationStr) {
+      toExpect.push(';')
+    }
+    let tokens = this.parseInstructions(str, index, toExpect);
+    if(tokens) {
+      tokens.splice(1, 1);
+      if(withTerminationStr) { 
+        tokens.splice(tokens.length - 1, 1);
+      }
+      return tokens;
+    }
+    return null;
+  }
+
+  getAssignation(str, index, withTerminationStr = true) {
+    let assignation = this.getAssignationTokens(str, index, withTerminationStr);
+    if(assignation) {
+      return Utils.createAssignationPayload(assignation);
+    }
+    return null;
+  }
+
+  getForLoop(str, index) {
+    let toExpect = ['for', '(', '$assignation', ';', '$expression', ';', '$assignation', ')', '{', '$code', '}']  
+    let tokens = this.parseInstructions(str, index, toExpect, false);
+    if(tokens) {
+      return tokens;
+    }
+    return false;
   }
 
   parseInitialization(str, index) {
     let isExpression = this.expectInitialization(str, index);
     if(isExpression) {
-      let toExpect = ['int', '$var', '=', '$expression', ';']
+      let toExpect = ['int', '$var', '=', '$expression', ';'];
       let tokens = this.parseInstructions(str, index, toExpect);
       if(tokens) {
         tokens.splice(2, 1);
@@ -219,44 +274,67 @@ class Parser {
         return Utils.createInitializationPayload(tokens);
       }
     }
+    let assignation = this.getAssignation(str, index);
+    if(assignation) {
+      return assignation;
+    }
+    let forLoop = this.getForLoop(str, index);
+    if(forLoop) {
+      return Utils.createForLoopPayload([forLoop[0], forLoop[1], forLoop[2]], forLoop.slice(3));
+    }
     return null;
   }
 
-  expectExpression(str, index) {
+  expectExpression(str, index, implicit = false) {
     let instructions = [];
     this.expectExpression_t(str, index, instructions)
-    return instructions;
+    if(!implicit) {
+      return instructions;
+    }
+    return Utils.createExpression(instructions);
+  }
+
+  parse_t(code, index) {
+    let codePointer = [index[0]];
+    let response = [];
+    while(codePointer[0] < code.length) {
+      let tokens = this.parseInitialization(code, codePointer);
+      if(!tokens) {
+        index[0] = codePointer[0];
+        return response;
+      }
+      response.push(tokens)
+    }
+    index[0] = codePointer[0];
+    return response;
   }
 
   parse() {
     let codePointer = [0];
-    let response = [];
-    while(codePointer[0] < this.code.length) {
-      let tokens = this.parseInitialization(this.code, codePointer);
-      console.log(JSON.stringify(tokens))
-      if(!tokens) {
-        return null;
-      }
-      response.push(tokens)
-    }
-    return this.expectExpression(this.code, codePointer)
+    return this.parse_t(this.code, codePointer)
   }
 }
 
-const codeToCompile1 = `
-int ana = 5;
-int vasile = 6;
+// const codeToCompile1 = `
+// int ana = 5;
+// int vasile = 6;
 
-int ionel;
-int i;
-for(i = 0; i < ana; i++) {
-  ionel = ionel + vasile;
-}
-`
+// int ionel;
+// int i;
+// for(i = 0; i < ana; i++) {
+//   ionel = ionel + vasile;
+// }
+// `
 
 const codeToCompile2 = `
 int b;
+int a = 0;
+int c = 3;
+for(b = 0; b < 5; b = b + 1) {
+  a = a + 1;
+  c = a + 3;
+}
 `
 
 const parse = new Parser(codeToCompile2);
-console.log(parse.parse());
+console.log("RESULLTTT:\n", JSON.stringify(parse.parse(), null, 2));
