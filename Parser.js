@@ -255,6 +255,15 @@ class Parser {
     return false;
   }
 
+  getConditional(str, index) {
+    let toExpect = ['if', '(', '$expression', ')', '{', '$code', '}']  
+    let tokens = this.parseInstructions(str, index, toExpect, false);
+    if(tokens) {
+      return tokens;
+    }
+    return false;
+  }
+
   parseInitialization(str, index) {
     let isExpression = this.expectInitialization(str, index);
     if(isExpression) {
@@ -281,6 +290,10 @@ class Parser {
     let forLoop = this.getForLoop(str, index);
     if(forLoop) {
       return Utils.createForLoopPayload([forLoop[0], forLoop[1], forLoop[2]], forLoop.slice(3));
+    }
+    let conditional = this.getConditional(str, index);
+    if(conditional) {
+      return Utils.createForLoopPayload([forLoop[0]], forLoop.slice(1));
     }
     return null;
   }
@@ -315,17 +328,6 @@ class Parser {
   }
 }
 
-// const codeToCompile1 = `
-// int ana = 5;
-// int vasile = 6;
-
-// int ionel;
-// int i;
-// for(i = 0; i < ana; i++) {
-//   ionel = ionel + vasile;
-// }
-// `
-
 const codeToCompile2 = `
 int b;
 int a = 0;
@@ -334,6 +336,7 @@ for(b = 0; b < 5; b = b + 1) {
   a = a + 1;
   c = a + 3;
 }
+int d = 9;
 `
 
 const parse = new Parser(codeToCompile2);
