@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script src='index.js'></script>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    textarea {
+      width: 400px;
+      height: 200px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>MIPS Compiler</h1>
+    <div>
+      <label for="dropdown">Select an option:</label>
+      <select id="dropdown" onchange="onSelectDropdown(this)">
+        <option value="none" active>None</option>
+        <option value="fibo">Fibonacci</option>
+        <option value="gauss_sum">Gauss Sum</option>
+        <option value="factorial">Factorial</option>
+      </select>
+    </div>
+    <textarea id="textarea1"></textarea>
+    <br>
+    <textarea id="textarea2"></textarea>
+    <br>
+    <button onclick="runCode()">Run</button>
+    <button onclick="compileCode()">Compile</button>
+  </div>
+
+  <script>
+    function runCode() {
+      alert(JSON.stringify(run(document.getElementById("textarea1").value), null, 2))
+    }
+
+    function compileCode() {
+      var code = document.getElementById("textarea1").value;
+      document.getElementById("textarea2").value = compile(code)
+    }
+
+    function fibo() {
+      return `int a = 1;
+int b = 1;
+int c = 0;
+int i = 0;
+int n = 10;
+for(i = 0; i < n; i = i + 1) {
+  c = a + b;
+  a = b;
+  b = c;
+}
+      `
+    }
+
+    function gauss_sum() {
+      return `int n = 10;
+int i;
+int sum = 0;
+for(i = 0; i < n; i = i + 1) {
+  sum = sum + i;
+}
+      `
+    }
+
+    function factorial() {
+      return `int n = 5;
+int i;
+int factorial = 1;
+for(i = 1; i < n; i = i + 1) {
+  factorial = factorial * i;
+}
+      `
+    }
+
+
+    function onSelectDropdown(self) {
+      switch(self.value) {
+        case 'none': {
+          document.getElementById("textarea1").value = ''
+          break;
+        }
+        case 'fibo': {
+          document.getElementById("textarea1").value = fibo()
+          break;
+        }
+        case 'gauss_sum': {
+          document.getElementById("textarea1").value = gauss_sum()
+          break;
+        }
+        case 'factorial': {
+          document.getElementById("textarea1").value = factorial()
+          break;
+        }
+      }
+    }
+  </script>
+</body>
+
+</html>

@@ -1343,8 +1343,6 @@ class Compiler {
   }
 }
 
-
-// user code
 function compile(code) {
   return (new Parser(code)).compile();
 }
@@ -1352,20 +1350,3 @@ function compile(code) {
 function run(code) {
   return (new Parser(code)).run();
 }
-
-// const codeToCompile2 = `
-// int a = 1;
-// int b = 1;
-// int c = 0;
-// int i = 0;
-// int n = 10;
-// for(i = 0; i < n; i = i + 1) {
-//   c = a + b;
-//   a = b;
-//   b = c;
-// }
-// `
-// console.log(compile(codeToCompile2))
-
-// // const parse = ;
-// // console.log(parse.run())
