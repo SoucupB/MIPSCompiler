@@ -881,11 +881,16 @@ class Parser {
 
   compile() {
     const parsedData = this.parse();
-    console.log(parsedData)
     const code = new Compiler(parsedData);
     code.compile();
     const resp = new RegistersEmbed(code.asm);
     return resp.toMipsString();
+  }
+
+  pretifyOutPut(runOutput) {
+    for(let i = 0; i < runOutput.length; i++) {
+      
+    }
   }
 
   run() {
