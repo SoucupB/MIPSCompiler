@@ -90,6 +90,22 @@ class Parser {
     return chr == '|' || chr == '-' || chr == '+' || chr == '*' || chr == '/' || chr == '%' || chr == '&' || chr == '=' || chr == '<' || chr == '>';
   }
 
+  _isExtendedSign(chr) {
+    return this._isSign(chr) || chr == '==' || chr == '<=' || chr == '>=';
+  }
+
+  _isSignToken(str, index) {
+    let token = "";
+    let i = index[0];
+    while(i < str.length && this._isSign(str[i])) {
+      token += str[i++];
+    }
+    if(token.length !== 0 && this._isExtendedSign(token)) {
+      return token;
+    }
+    return null;
+  }
+
   _extractParanthesisOperations(str, index, instructions) {
     this.spaceSeparator(str, index);
     if(str[index[0]] == '(') {
@@ -119,8 +135,9 @@ class Parser {
     }
     this.spaceSeparator(str, currentIndex);
     instructions.push(token)
-    while(currentIndex[0] < str.length && this._isSign(str[currentIndex[0]])) {
-      instructions.push(str[currentIndex[0]++])
+    while(currentIndex[0] < str.length && this._isSignToken(str, currentIndex)) {
+      instructions.push(this._isSignToken(str, currentIndex))
+      currentIndex[0] += this._isSignToken(str, currentIndex).length;
       const paranthExpression = this._extractParanthesisOperations(str, currentIndex, instructions);
       if(paranthExpression == 0) {
         return ;
@@ -331,6 +348,7 @@ class Parser {
 
   compile() {
     const parsedData = this.parse();
+    console.log(parsedData)
     const code = new Compiler(parsedData);
     code.compile();
     const resp = new RegistersEmbed(code.asm);
