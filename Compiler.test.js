@@ -258,6 +258,7 @@ test('sum of digits', () => {
       Utils.createAssignationPayload(['count', 'count', '+', '1']),
     ]),
   ]
+  // console.log(JSON.stringify(toCompile, null, 2))
   const code = new Compiler(toCompile);
   code.compile()
   const resp = new RegistersEmbed(code.asm);
@@ -266,4 +267,29 @@ test('sum of digits', () => {
   expect(regMem.memory[2]).toBe(7); // i
   expect(regMem.memory[1]).toBe(0); // a
   expect(regMem.memory[3]).toBe(20); // sum
+});
+
+test('failing test', () => {
+  const toCompile = [
+    Utils.createInitializationPayload(['int', 'b']),
+    Utils.createInitializationPayload(['int', 'a', '0']),
+    Utils.createInitializationPayload(['int', 'c', '3']),
+    Utils.createForLoopPayload([Utils.createAssignationPayload(['b', '0']), Utils.createExpression(['b', '<', '5']), Utils.createAssignationPayload(['b', 'b', '+', '1'])], [
+      Utils.createAssignationPayload(['a', 'a', '+', '1']),
+      Utils.createAssignationPayload(['c', 'a', '+', '3']),
+    ]),
+    Utils.createInitializationPayload(['int', 'd', '9']),
+    Utils.createConditionalPayload(Utils.createExpression(['d', '>', '10']), [
+      Utils.createAssignationPayload(['c', '1']),
+    ]),
+  ]
+  console.log(JSON.stringify(toCompile, null, 2))
+  const code = new Compiler(toCompile);
+  code.compile()
+  const resp = new RegistersEmbed(code.asm);
+  const regMem = resp.executeMips(resp.toMips());
+  expect(regMem.memory[0]).toBe(5); // i
+  expect(regMem.memory[1]).toBe(5); // a
+  expect(regMem.memory[2]).toBe(8); // a
+  expect(regMem.memory[3]).toBe(9); // sum
 });

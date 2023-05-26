@@ -1,0 +1,236 @@
+[
+  {
+    "token": "initialization",
+    "payload": [
+      {
+        "token": 9,
+        "payload": "int"
+      },
+      {
+        "token": 8,
+        "payload": "b"
+      }
+    ]
+  },
+  {
+    "token": "initialization",
+    "payload": [
+      {
+        "token": 9,
+        "payload": "int"
+      },
+      {
+        "token": 8,
+        "payload": "a"
+      },
+      {
+        "token": 10,
+        "payload": [
+          {
+            "token": 4,
+            "value": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "token": "initialization",
+    "payload": [
+      {
+        "token": 9,
+        "payload": "int"
+      },
+      {
+        "token": 8,
+        "payload": "c"
+      },
+      {
+        "token": 10,
+        "payload": [
+          {
+            "token": 4,
+            "value": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "token": "for_loop",
+    "payload": [
+      {
+        "token": "assignation",
+        "payload": [
+          {
+            "token": 8,
+            "payload": "b"
+          },
+          {
+            "token": 10,
+            "payload": [
+              {
+                "token": 4,
+                "value": 0
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "token": 10,
+        "payload": [
+          {
+            "token": 8,
+            "value": "b"
+          },
+          {
+            "token": 14
+          },
+          {
+            "token": 4,
+            "value": 5
+          }
+        ]
+      },
+      {
+        "token": "assignation",
+        "payload": [
+          {
+            "token": 8,
+            "payload": "b"
+          },
+          {
+            "token": 10,
+            "payload": [
+              {
+                "token": 8,
+                "value": "b"
+              },
+              {
+                "token": 1
+              },
+              {
+                "token": 4,
+                "value": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "token": "assignation",
+        "payload": [
+          {
+            "token": 8,
+            "payload": "a"
+          },
+          {
+            "token": 10,
+            "payload": [
+              {
+                "token": 8,
+                "value": "a"
+              },
+              {
+                "token": 1
+              },
+              {
+                "token": 4,
+                "value": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "token": "assignation",
+        "payload": [
+          {
+            "token": 8,
+            "payload": "c"
+          },
+          {
+            "token": 10,
+            "payload": [
+              {
+                "token": 8,
+                "value": "a"
+              },
+              {
+                "token": 1
+              },
+              {
+                "token": 4,
+                "value": 3
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "token": "initialization",
+    "payload": [
+      {
+        "token": 9,
+        "payload": "int"
+      },
+      {
+        "token": 8,
+        "payload": "d"
+      },
+      {
+        "token": 10,
+        "payload": [
+          {
+            "token": 4,
+            "value": 9
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "token": "condition",
+    "payload": [
+      {
+        "token": 10,
+        "payload": [
+          [
+            {
+              "token": 8,
+              "value": "d"
+            },
+            {
+              "token": 13
+            },
+            {
+              "token": 4,
+              "value": 10
+            }
+          ]
+        ]
+      },
+      {
+        "token": "assignation",
+        "payload": [
+          {
+            "token": 8,
+            "payload": "c"
+          },
+          {
+            "token": 10,
+            "payload": [
+              {
+                "token": 4,
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

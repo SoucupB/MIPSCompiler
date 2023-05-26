@@ -1,4 +1,6 @@
 const { Utils } = require('./Utils')
+const Compiler = require('./Compiler')
+const { Register, RegisterEmbed, RegistersEmbed } = require('./Register');
 
 class Parser {
   constructor(code) {
@@ -343,4 +345,12 @@ if(d > 10) {
 `
 
 const parse = new Parser(codeToCompile2);
-console.log("RESULLTTT:\n", JSON.stringify(parse.parse(), null, 2));
+const parsedData = parse.parse();
+console.log(JSON.stringify(parsedData, null, 2))
+const code = new Compiler(parsedData);
+code.compile()
+console.log(code.asm)
+const resp = new RegistersEmbed(code.asm);
+const regMem = resp.executeMips(resp.toMips());
+console.log(resp.toMipsString())
+// console.log("RESULLTTT:\n", JSON.stringify(parse.parse(), null, 2));
