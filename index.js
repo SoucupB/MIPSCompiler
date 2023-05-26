@@ -391,6 +391,10 @@ class RegistersEmbed {
           registers[this._mips_ExtractReg(param[0])] = registers[this._mips_ExtractReg(param[1])] + registers[this._mips_ExtractReg(param[2])]
           break;
         }
+        case 'sub': {
+          registers[this._mips_ExtractReg(param[0])] = registers[this._mips_ExtractReg(param[1])] - registers[this._mips_ExtractReg(param[2])]
+          break;
+        }
         case 'or': {
           registers[this._mips_ExtractReg(param[0])] = (registers[this._mips_ExtractReg(param[1])] != 0 || registers[this._mips_ExtractReg(param[2])] != 0) ? 1 : 0
           break;
@@ -495,6 +499,10 @@ class RegistersEmbed {
         }
         case 'add': {
           response.push(new RegisterEmbed('add', [`$${params[0]}`, `$${params[1]}`, `$${params[2]}`]))
+          break;
+        }
+        case 'sub': {
+          response.push(new RegisterEmbed('sub', [`$${params[0]}`, `$${params[1]}`, `$${params[2]}`]))
           break;
         }
         case 'div': {
@@ -674,15 +682,19 @@ class Parser {
 
   expectExpression_t(str, index, instructions) {
     let currentIndex = [index[0]]
-    if(this._extractParanthesisOperations(str, currentIndex, instructions) == 0) {
+    const paranthResponse = this._extractParanthesisOperations(str, currentIndex, instructions);
+    if(paranthResponse == 0) {
       return ;
     }
-    let token = this.getNextToken(str, currentIndex)
-    if(!token) {
-      return ;
+    let token;
+    if(paranthResponse != 1) {
+      token = this.getNextToken(str, currentIndex)
+      if(!token) {
+        return ;
+      }
+      instructions.push(token)
     }
     this.spaceSeparator(str, currentIndex);
-    instructions.push(token)
     while(currentIndex[0] < str.length && this._isSignToken(str, currentIndex)) {
       instructions.push(this._isSignToken(str, currentIndex))
       currentIndex[0] += this._isSignToken(str, currentIndex).length;

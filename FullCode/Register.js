@@ -88,6 +88,10 @@ class RegistersEmbed {
           registers[this._mips_ExtractReg(param[0])] = registers[this._mips_ExtractReg(param[1])] + registers[this._mips_ExtractReg(param[2])]
           break;
         }
+        case 'sub': {
+          registers[this._mips_ExtractReg(param[0])] = registers[this._mips_ExtractReg(param[1])] - registers[this._mips_ExtractReg(param[2])]
+          break;
+        }
         case 'or': {
           registers[this._mips_ExtractReg(param[0])] = (registers[this._mips_ExtractReg(param[1])] != 0 || registers[this._mips_ExtractReg(param[2])] != 0) ? 1 : 0
           break;
@@ -186,6 +190,10 @@ class RegistersEmbed {
         }
         case 'add': {
           response.push(new RegisterEmbed('add', [`$${params[0]}`, `$${params[1]}`, `$${params[2]}`]))
+          break;
+        }
+        case 'sub': {
+          response.push(new RegisterEmbed('sub', [`$${params[0]}`, `$${params[1]}`, `$${params[2]}`]))
           break;
         }
         case 'div': {

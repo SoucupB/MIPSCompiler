@@ -126,15 +126,19 @@ class Parser {
 
   expectExpression_t(str, index, instructions) {
     let currentIndex = [index[0]]
-    if(this._extractParanthesisOperations(str, currentIndex, instructions) == 0) {
+    const paranthResponse = this._extractParanthesisOperations(str, currentIndex, instructions);
+    if(paranthResponse == 0) {
       return ;
     }
-    let token = this.getNextToken(str, currentIndex)
-    if(!token) {
-      return ;
+    let token;
+    if(paranthResponse != 1) {
+      token = this.getNextToken(str, currentIndex)
+      if(!token) {
+        return ;
+      }
+      instructions.push(token)
     }
     this.spaceSeparator(str, currentIndex);
-    instructions.push(token)
     while(currentIndex[0] < str.length && this._isSignToken(str, currentIndex)) {
       instructions.push(this._isSignToken(str, currentIndex))
       currentIndex[0] += this._isSignToken(str, currentIndex).length;
@@ -348,7 +352,6 @@ class Parser {
 
   compile() {
     const parsedData = this.parse();
-    console.log(parsedData)
     const code = new Compiler(parsedData);
     code.compile();
     const resp = new RegistersEmbed(code.asm);
@@ -365,16 +368,7 @@ class Parser {
 }
 
 const codeToCompile2 = `
-int a = 1;
-int b = 1;
-int c = 0;
-int i = 0;
-int n = 10;
-for(i = 0; i <= n; i = i + 1) {
-  c = a + b;
-  a = b;
-  b = c;
-}
+int a = (10 + 1) - 2;
 `
 
 const parse = new Parser(codeToCompile2);
