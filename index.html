@@ -26,7 +26,7 @@
 
 <body>
   <div class="container">
-    <h1>MIPS Compiler</h1>
+    <h1>MIPS Compiler 32bit</h1>
     <div>
       <label for="dropdown">Select an option:</label>
       <select id="dropdown" onchange="onSelectDropdown(this)">
@@ -47,6 +47,8 @@
 
   <script>
     function runCode() {
+      const code = run(document.getElementById("textarea1").value);
+
       alert(JSON.stringify(run(document.getElementById("textarea1").value), null, 2))
     }
 
