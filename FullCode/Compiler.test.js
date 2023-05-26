@@ -258,12 +258,10 @@ test('sum of digits', () => {
       Utils.createAssignationPayload(['count', 'count', '+', '1']),
     ]),
   ]
-  // console.log(JSON.stringify(toCompile, null, 2))
   const code = new Compiler(toCompile);
   code.compile()
   const resp = new RegistersEmbed(code.asm);
   const regMem = resp.executeMips(resp.toMips());
-  console.log(resp.toMipsString())
   expect(regMem.memory[2]).toBe(7); // i
   expect(regMem.memory[1]).toBe(0); // a
   expect(regMem.memory[3]).toBe(20); // sum
@@ -283,7 +281,6 @@ test('failing test', () => {
       Utils.createAssignationPayload(['c', '1']),
     ]),
   ]
-  console.log(JSON.stringify(toCompile, null, 2))
   const code = new Compiler(toCompile);
   code.compile()
   const resp = new RegistersEmbed(code.asm);
