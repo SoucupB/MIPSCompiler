@@ -91,7 +91,7 @@ class Parser {
   }
 
   _isExtendedSign(chr) {
-    return this._isSign(chr) || chr == '==' || chr == '<=' || chr == '>=';
+    return this._isSign(chr) || chr == '==' || chr == '<=' || chr == '>=' || chr == '!=';
   }
 
   _isSignToken(str, index) {
