@@ -334,31 +334,30 @@ class Parser {
     const code = new Compiler(parsedData);
     code.compile();
     const resp = new RegistersEmbed(code.asm);
-    console.log(resp.executeMips(resp.toMips()))
-    return resp;
+    return resp.toMipsString();
+  }
+
+  run() {
+    const parsedData = this.parse();
+    const code = new Compiler(parsedData);
+    code.compile();
+    const resp = new RegistersEmbed(code.asm);
+    return resp.executeMips(resp.toMips());
   }
 }
 
 const codeToCompile2 = `
-int b;
-int a = 0;
-int c = 3;
-for(b = 0; b < 5; b = b + 1) {
-  if(b < 3) {
-    c = a + 10;
-  }
-  a = a + 1;
+int a = 1;
+int b = 1;
+int c = 0;
+int i = 0;
+int n = 10;
+for(i = 0; i < n; i = i + 1) {
+  c = a + b;
+  a = b;
+  b = c;
 }
 `
 
 const parse = new Parser(codeToCompile2);
 console.log(parse.compile())
-// const parsedData = parse.parse();
-// console.log(JSON.stringify(parsedData, null, 2))
-// const code = new Compiler(parsedData);
-// code.compile()
-// console.log(code.asm)
-// const resp = new RegistersEmbed(code.asm);
-// const regMem = resp.executeMips(resp.toMips());
-// console.log(resp.toMipsString())
-// console.log("RESULLTTT:\n", JSON.stringify(parse.parse(), null, 2));
