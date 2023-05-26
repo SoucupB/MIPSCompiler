@@ -295,7 +295,7 @@ class Parser {
     }
     let conditional = this.getConditional(str, index);
     if(conditional) {
-      return Utils.createConditionalPayload([conditional[0]], conditional.slice(1));
+      return Utils.createConditionalPayload(conditional[0], conditional.slice(1));
     }
     return null;
   }

@@ -198,19 +198,17 @@
       {
         "token": 10,
         "payload": [
-          [
-            {
-              "token": 8,
-              "value": "d"
-            },
-            {
-              "token": 13
-            },
-            {
-              "token": 4,
-              "value": 10
-            }
-          ]
+          {
+            "token": 8,
+            "value": "d"
+          },
+          {
+            "token": 13
+          },
+          {
+            "token": 4,
+            "value": 10
+          }
         ]
       },
       {
