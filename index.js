@@ -330,8 +330,9 @@ class RegisterEmbed {
 }
 
 class RegistersEmbed {
-  constructor(asm) {
+  constructor(asm, variables) {
     this.asm = asm
+    this.variables = variables;
   }
 
   _isRegister(param) {
@@ -367,7 +368,15 @@ class RegistersEmbed {
     return parseInt(param.charAt(1));
   }
 
-  executeMips(mipsAsm, registerCount = 32, memCount = 256) {
+  pretifyOutPut(output) {
+    let response = ""
+    for(const [key, _] of Object.entries(this.variables.definedVariables)) {
+      response += `${key}: ${output['memory'][this.variables.memoryAdr[key]]};` + '\n'
+    }
+    return response;
+  }
+
+  executeMips(mipsAsm, pretify = false, registerCount = 32, memCount = 256) {
     let memory = Array(memCount).fill(0);
     let registers = Array(registerCount).fill(0);
     let i = 0;
@@ -448,6 +457,12 @@ class RegistersEmbed {
         }
       }
       i++;
+    }
+    if(pretify) {
+      return this.pretifyOutPut({
+        memory: memory,
+        registers: registers
+      })
     }
     return {
       memory: memory,
@@ -883,22 +898,16 @@ class Parser {
     const parsedData = this.parse();
     const code = new Compiler(parsedData);
     code.compile();
-    const resp = new RegistersEmbed(code.asm);
+    const resp = new RegistersEmbed(code.asm, code.variables);
     return resp.toMipsString();
-  }
-
-  pretifyOutPut(runOutput) {
-    for(let i = 0; i < runOutput.length; i++) {
-      
-    }
   }
 
   run() {
     const parsedData = this.parse();
     const code = new Compiler(parsedData);
     code.compile();
-    const resp = new RegistersEmbed(code.asm);
-    return resp.executeMips(resp.toMips());
+    const resp = new RegistersEmbed(code.asm, code.variables);
+    return resp.executeMips(resp.toMips(), true);
   }
 }
 
