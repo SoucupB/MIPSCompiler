@@ -64,7 +64,6 @@ class ExpressionTree {
     if(node.token == tokens.constant_token) {
       return new RegisterEmbed('mov', [this._getRegisterValue(node.id), node.value]);
     }
-    // console.log(node.value, this.variables.getVariableMemory(node.value))
     return new RegisterEmbed('mov', [this._getRegisterValue(node.id), `[${this.variables.getVariableMemory(node.value)}]`]);
   }
 
